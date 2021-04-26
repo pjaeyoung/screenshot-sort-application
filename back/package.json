@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "yarn mocha -r ts-node/register ./src/tests/*.spec.ts"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.16",
+    "@types/jasmine": "^3.6.9",
+    "@types/jest": "^26.0.22",
+    "@types/mocha": "^8.2.2",
+    "chai": "^4.3.4",
+    "jasmine": "^3.7.0",
+    "mocha": "^8.3.2",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {}
+}
