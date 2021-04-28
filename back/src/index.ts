@@ -1,6 +1,7 @@
-import express, { application } from "express";
+import express from "express";
 
 const app: express.Application = express();
+const bodyParser = require('body-parser');
 
 app.get(
     "/",
@@ -9,4 +10,4 @@ app.get(
     }
 )
 
-export default app;
+export defat app;
