@@ -1,11 +1,19 @@
 import {expect} from "chai";
 import { request } from "express";
 import 'jasmine';
-import app from '../../src/index'
 
-describe('app', ()=> {
 
-    it('상태코드', (done)=>{
-    
-    })
+
+const detecting = require('/Users/jean/JEAN/JeansProject/ScCap/back/src/components/visionAPITS/detectingImgs');
+
+describe('vision api test', ()=>{
+   
+    before(function(){
+
+        console.log('---before---')
+    });
+    after(function(){
+
+        console.log('---afeter---')
+    });
 });

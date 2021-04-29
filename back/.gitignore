@@ -2,3 +2,5 @@
 
 *.env
 *.env.dev
+*.json
+config.js

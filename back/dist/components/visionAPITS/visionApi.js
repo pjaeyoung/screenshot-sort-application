@@ -35,7 +35,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-function detectLables(fileName) {
+// [START vision_quickstart]
+function visionAPI() {
     return __awaiter(this, void 0, void 0, function () {
         var vision, client, result, labels;
         return __generator(this, function (_a) {
@@ -43,7 +44,7 @@ function detectLables(fileName) {
                 case 0:
                     vision = require('@google-cloud/vision');
                     client = new vision.ImageAnnotatorClient();
-                    return [4 /*yield*/, client.labelDetection(fileName)];
+                    return [4 /*yield*/, client.labelDetection('/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/bunny.jpeg')];
                 case 1:
                     result = (_a.sent())[0];
                     labels = result.labelAnnotations;
@@ -54,6 +55,6 @@ function detectLables(fileName) {
         });
     });
 }
-var fileName = '/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/bunny.jpeg';
-detectLables(fileName);
+visionAPI();
+// [END vision_quickstart]
 //# sourceMappingURL=visionApi.js.map

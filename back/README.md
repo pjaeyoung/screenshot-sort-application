@@ -8,3 +8,7 @@
 - docs : Everthing related to docs
 - chore : regular code maintenance
 - add, delete : 
+
+## check List!
+- config 파일은 이후 제대로 배포시에는 
+.gitignore  설정후 배포해야합니다.

@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,25 +34,56 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-function detectLables(fileName) {
+// [START vision_quickstart]
+function DectectingLabel() {
     return __awaiter(this, void 0, void 0, function () {
-        var vision, client, result, labels;
+        var vision, client, labelsreturn, result, labels;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     vision = require('@google-cloud/vision');
                     client = new vision.ImageAnnotatorClient();
-                    return [4 /*yield*/, client.labelDetection(fileName)];
+                    labelsreturn = [];
+                    return [4 /*yield*/, client.labelDetection('/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/bunny.jpeg')];
                 case 1:
                     result = (_a.sent())[0];
                     labels = result.labelAnnotations;
                     console.log('Labels:');
-                    labels.forEach(function (label) { return console.log(label.description); });
+                    labels.forEach(function (label) {
+                        //labelsreturn.push(label.description)
+                        console.log(label.description);
+                    });
                     return [2 /*return*/];
             }
         });
     });
 }
-var fileName = '/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/bunny.jpeg';
-detectLables(fileName);
-//# sourceMappingURL=visionApi.js.map
+function DectectingLogo() {
+    return __awaiter(this, void 0, void 0, function () {
+        var vision, client, logosreturn, result, logos;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    vision = require('@google-cloud/vision');
+                    client = new vision.ImageAnnotatorClient();
+                    logosreturn = [];
+                    return [4 /*yield*/, client.logoDetection('/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/starbucks.png')];
+                case 1:
+                    result = (_a.sent())[0];
+                    logos = result.logoAnnotations;
+                    console.log('Logos:');
+                    logos.forEach(function (logo) {
+                        console.log(logo.description);
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+module.exports = {
+    DectectingLabel: DectectingLabel,
+    DectectingLogo: DectectingLogo
+};
+// [END vision_quickstar
+DectectingLabel();
+DectectingLogo();

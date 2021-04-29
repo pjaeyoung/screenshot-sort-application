@@ -35,25 +35,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-function detectLables(fileName) {
+// [START vision_quickstart]
+function DetectingLabel() {
     return __awaiter(this, void 0, void 0, function () {
-        var vision, client, result, labels;
+        var vision, client, labelsreturn, result, labels;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     vision = require('@google-cloud/vision');
                     client = new vision.ImageAnnotatorClient();
-                    return [4 /*yield*/, client.labelDetection(fileName)];
+                    labelsreturn = [];
+                    return [4 /*yield*/, client.LabelDetection('/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/bunny.jpeg')];
                 case 1:
                     result = (_a.sent())[0];
                     labels = result.labelAnnotations;
                     console.log('Labels:');
-                    labels.forEach(function (label) { return console.log(label.description); });
-                    return [2 /*return*/];
+                    labels.forEach(function (label) {
+                        labelsreturn.push(label.description);
+                    });
+                    return [2 /*return*/, labelsreturn];
             }
         });
     });
 }
-var fileName = '/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/bunny.jpeg';
-detectLables(fileName);
-//# sourceMappingURL=visionApi.js.map
+DetectingLabel();
+// [END vision_quickstart]
+//# sourceMappingURL=detectingLabel.js.map
