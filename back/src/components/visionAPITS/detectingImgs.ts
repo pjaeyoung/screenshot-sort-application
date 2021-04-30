@@ -1,6 +1,6 @@
 
     // [START vision_quickstart]
-async function DectectingLabel(filename = undefined, fileroot = undefined) {//이후에 요청으로 받아서 넣기.
+async function dectectingLabel(filename = undefined, fileroot = undefined) {//이후에 요청으로 받아서 넣기.
   // Imports the Google Cloud client library
   const vision = require('@google-cloud/vision');
     
@@ -24,7 +24,7 @@ async function DectectingLabel(filename = undefined, fileroot = undefined) {//�
 }
 
 
-async function DectectingLogo(filename = undefined, fileroot = undefined) {
+async function dectectingLogo(filename = undefined, fileroot = undefined) {
   // Imports the Google Cloud client library
   const vision = require('@google-cloud/vision');
     
@@ -46,16 +46,63 @@ async function DectectingLogo(filename = undefined, fileroot = undefined) {
 }
 
 
+async function detectingText(fileName=undefined, fileroot=undefined) {
+  // [START vision_text_detection]
+  const vision = require('@google-cloud/vision');
+
+  // Creates a client
+  const client = new vision.ImageAnnotatorClient();
+
+  const [result] = await client.textDetection('/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/starbucks.png');
+  const detections = result.textAnnotations;
+  console.log('Text:');
+  detections.forEach((text: { description: any; }) => console.log(text.description));
+  // [END vision_text_detection]
+}
+
+
+async function localizeObjects() {
+
+  const vision = require('@google-cloud/vision');
+  const fs = require('fs');
+
+  // Creates a client
+  const client = new vision.ImageAnnotatorClient();
+
+  /**
+   * TODO(developer): Uncomment the following line before running the sample.
+   */
+  const fileName = `/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/butterfly.webp`;
+  const request = {
+    image: {content: fs.readFileSync(fileName)},
+  };
+
+  const [result] = await client.objectLocalization(request);
+  const objects = result.localizedObjectAnnotations;
+  objects.forEach((object: { name: any; score: any; boundingPoly: { normalizedVertices: any; }; }) => {
+    console.log(`Name: ${object.name}`);
+    console.log(`Confidence: ${object.score}`);
+    const vertices = object.boundingPoly.normalizedVertices;
+    vertices.forEach((v: { x: any; y: any; }) => console.log(`x: ${v.x}, y:${v.y}`));
+  });
+  // [END vision_localize_objects]
+}
 module.exports ={ 
   
-  DectectingLabel : DectectingLabel,
+  dectectingLabel,
 
-  DectectingLogo : DectectingLogo
+  dectectingLogo,
+
+  detectingText,
+
+  
 }
     
     // [END vision_quickstar
 
   
   
-DectectingLabel();
-DectectingLogo();
+dectectingLabel();
+dectectingLogo();
+detectingText();
+localizeObjects();

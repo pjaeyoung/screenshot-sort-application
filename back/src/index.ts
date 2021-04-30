@@ -1,17 +1,17 @@
 
 
 const express = require('express');
-const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const modules = require('../src/components/visionAPITS/detectingImgs')
 
 const app = express();
 
+dotenv.config();
 
-app.use(bodyParser.json());
-app.use(bodyParser.raw());
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.text());
+const indexRouter = require('./components/routers/indexRouter');
+const moduleRouter = require('./components/routers/modules/module');
 
+app.set('port', process.env.PORT || 8002);
 
-console.log(typeof modules.DectectingLabel)
+app.use('/', indexRouter);
+app.use('/module',moduleRouter);

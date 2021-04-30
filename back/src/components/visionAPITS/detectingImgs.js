@@ -35,7 +35,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 // [START vision_quickstart]
-function DectectingLabel() {
+function dectectingLabel(filename, fileroot) {
+    if (filename === void 0) { filename = undefined; }
+    if (fileroot === void 0) { fileroot = undefined; }
     return __awaiter(this, void 0, void 0, function () {
         var vision, client, labelsreturn, result, labels;
         return __generator(this, function (_a) {
@@ -58,7 +60,9 @@ function DectectingLabel() {
         });
     });
 }
-function DectectingLogo() {
+function dectectingLogo(filename, fileroot) {
+    if (filename === void 0) { filename = undefined; }
+    if (fileroot === void 0) { fileroot = undefined; }
     return __awaiter(this, void 0, void 0, function () {
         var vision, client, logosreturn, result, logos;
         return __generator(this, function (_a) {
@@ -80,10 +84,62 @@ function DectectingLogo() {
         });
     });
 }
+function detectingText(fileName, fileroot) {
+    if (fileName === void 0) { fileName = undefined; }
+    if (fileroot === void 0) { fileroot = undefined; }
+    return __awaiter(this, void 0, void 0, function () {
+        var vision, client, result, detections;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    vision = require('@google-cloud/vision');
+                    client = new vision.ImageAnnotatorClient();
+                    return [4 /*yield*/, client.textDetection('/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/starbucks.png')];
+                case 1:
+                    result = (_a.sent())[0];
+                    detections = result.textAnnotations;
+                    console.log('Text:');
+                    detections.forEach(function (text) { return console.log(text.description); });
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function localizeObjects() {
+    return __awaiter(this, void 0, void 0, function () {
+        var vision, fs, client, fileName, request, result, objects;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    vision = require('@google-cloud/vision');
+                    fs = require('fs');
+                    client = new vision.ImageAnnotatorClient();
+                    fileName = "/Users/jean/JEAN/JeansProject/ScCap/back/src/testimg/butterfly.webp";
+                    request = {
+                        image: { content: fs.readFileSync(fileName) }
+                    };
+                    return [4 /*yield*/, client.objectLocalization(request)];
+                case 1:
+                    result = (_a.sent())[0];
+                    objects = result.localizedObjectAnnotations;
+                    objects.forEach(function (object) {
+                        console.log("Name: " + object.name);
+                        console.log("Confidence: " + object.score);
+                        var vertices = object.boundingPoly.normalizedVertices;
+                        vertices.forEach(function (v) { return console.log("x: " + v.x + ", y:" + v.y); });
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 module.exports = {
-    DectectingLabel: DectectingLabel,
-    DectectingLogo: DectectingLogo
+    dectectingLabel: dectectingLabel,
+    dectectingLogo: dectectingLogo,
+    detectingText: detectingText
 };
 // [END vision_quickstar
-DectectingLabel();
-DectectingLogo();
+dectectingLabel();
+dectectingLogo();
+detectingText();
+localizeObjects();
