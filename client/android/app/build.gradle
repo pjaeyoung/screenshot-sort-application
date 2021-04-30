@@ -131,7 +131,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.sscap"
+        applicationId "com.sccap.sccap"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

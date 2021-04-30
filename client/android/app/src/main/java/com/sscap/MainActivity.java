@@ -1,4 +1,4 @@
-package com.sscap;
+package com.sccap.sccap;
 
 import com.facebook.react.ReactActivity;
 

@@ -1,0 +1,82 @@
+{
+  "name": "sccap",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "postinstall": "node-git-hooks",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest --passWithNoTests",
+    "lint": "eslint --no-error-on-unmatched-pattern --ext .tsx --ext .ts .",
+    "lint-staged": "lint-staged",
+    "devtools": "react-devtools",
+    "kill": "kill -9 $(lsof -t -i:8081)",
+    "dev": "concurrently  \" yarn kill \" & yarn start --reset-cache & yarn android & yarn devtools  "
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx}": [
+      "yarn lint",
+      "yarn test"
+    ]
+  },
+  "dependencies": {
+    "@emotion/native": "^11.0.0",
+    "@emotion/react": "^11.1.5",
+    "@react-native-async-storage/async-storage": "^1.15.4",
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/native": "^5.9.4",
+    "@react-navigation/stack": "^5.14.4",
+    "@reduxjs/toolkit": "^1.5.1",
+    "prop-types": "^15.7.2",
+    "react": "17.0.1",
+    "react-native": "0.64.0",
+    "react-native-background-actions": "^2.6.0",
+    "react-native-detector": "^0.1.2",
+    "react-native-draggable": "^3.3.0",
+    "react-native-fs": "^2.17.0",
+    "react-native-gesture-handler": "^1.10.3",
+    "react-native-permissions": "^3.0.2",
+    "react-native-reanimated": "^2.1.0",
+    "react-native-safe-area-context": "^3.2.0",
+    "react-native-screens": "^3.1.1",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0",
+    "rn-openapp": "^1.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "@types/jest": "^26.0.22",
+    "@types/react": "^17.0.3",
+    "@types/react-native": "^0.64.4",
+    "@types/react-redux": "^7.1.16",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "babel-jest": "^26.6.3",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "concurrently": "^6.0.2",
+    "eslint": "^7.12.1",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.23.2",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "jest": "^26.6.3",
+    "lint-staged": "^10.5.4",
+    "metro-react-native-babel-preset": "^0.64.0",
+    "node-git-hooks": "^1.0.6",
+    "prettier": "^2.2.1",
+    "react-devtools": "^4.12.4",
+    "react-test-renderer": "17.0.1",
+    "redux-devtools": "^3.7.0",
+    "ts-jest": "^26.5.5",
+    "typescript": "^4.2.4"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
