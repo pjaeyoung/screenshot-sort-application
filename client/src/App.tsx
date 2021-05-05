@@ -13,8 +13,10 @@ import requestPermissions from '@/shared/utils/requestPermissions';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { navigationRef } from './RootNavigation';
 
-import Sort from '@/sort/components/index';
+import { MainScreen } from '@/main/components';
+import { SortScreen } from '@/sort/components';
 
 const Stack = createStackNavigator();
 
@@ -23,15 +25,14 @@ const App: React.FC<void> = () => {
     requestPermissions();
   }, []);
 
-  // TODO: 스샷 감지하여 앱이 실행된 경우 Sort 화면이 실행되도록 하기
-
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
         }}>
-        <Stack.Screen name="Home" component={Sort} />
+        <Stack.Screen name="Main" component={MainScreen} />
+        <Stack.Screen name="Sort" component={SortScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
