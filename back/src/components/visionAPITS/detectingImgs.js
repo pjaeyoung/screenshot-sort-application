@@ -138,8 +138,3 @@ module.exports = {
     dectectingLogo: dectectingLogo,
     detectingText: detectingText
 };
-// [END vision_quickstar
-dectectingLabel();
-dectectingLogo();
-detectingText();
-localizeObjects();

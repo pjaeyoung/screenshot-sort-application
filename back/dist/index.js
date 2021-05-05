@@ -1,12 +1,16 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var express = require("express");
-var bodyParser = require("body-parser");
+var express = require('express');
+// const dotenv = require('dotenv');
 var modules = require('../src/components/visionAPITS/detectingImgs');
+//require('dotenv').config;
 var app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.raw());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.text());
-console.log(typeof modules.DectectingLabel);
+//dotenv.config();
+var api_key = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+var indexRouter = require('./components/routers/indexRouter');
+var server = app.listen(8002, function () {
+    console.log("API listen port 8002");
+});
+app.use(express.json());
+app.use('/', indexRouter);
+modules.exports = server;
 //# sourceMappingURL=index.js.map

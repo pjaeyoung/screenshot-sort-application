@@ -1,19 +1,19 @@
-import {expect} from "chai";
-import { request } from "express";
-import 'jasmine';
+import { expect } from 'chai';
+import { Request, response, Response } from 'express';
+import jasmine from 'jasmine';
+import { Done } from 'mocha';
+
+const request = require('supertest');
 
 
+const index = require('../index');
+const testImg = '/Users/jean/JEAN/JeansProject/SCCAP/back/src/testimg/bunny.jpeg'
 
-const detecting = require('/Users/jean/JEAN/JeansProject/ScCap/back/src/components/visionAPITS/detectingImgs');
 
-describe('vision api test', ()=>{
-   
-    before(function(){
-
-        console.log('---before---')
-    });
-    after(function(){
-
-        console.log('---afeter---')
-    });
+    describe('POST /getIdx/labellist', ()=>{
+        it('/', async ()=>{
+            const res = await request(index).post('/getIdx/labellist').send({filename : testImg})
+        console.log(res.body)
+        expect(res.body).to.equal('')
+        });
 });

@@ -1,17 +1,22 @@
 
 
 const express = require('express');
-const dotenv = require('dotenv');
+// const dotenv = require('dotenv');
 const modules = require('../src/components/visionAPITS/detectingImgs')
 
+//require('dotenv').config;
+
 const app = express();
+//dotenv.config();
 
-dotenv.config();
-
+const api_key = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 const indexRouter = require('./components/routers/indexRouter');
-const moduleRouter = require('./components/routers/modules/module');
 
-app.set('port', process.env.PORT || 8002);
+const server = app.listen(8002, function(){
+    console.log("API listen port 8002")
+})
 
+app.use(express.json());
 app.use('/', indexRouter);
-app.use('/module',moduleRouter);
+
+modules.exports = server;

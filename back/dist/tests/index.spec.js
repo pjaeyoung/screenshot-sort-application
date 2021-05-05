@@ -36,23 +36,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-require("jasmine");
-var detecting = require('/Users/jean/JEAN/JeansProject/ScCap/back/src/components/visionAPITS/detectingImgs.ts');
-describe('vision api test', function () {
-    before(function () {
-        console.log('---before---');
-    });
-    after(function () {
-        console.log('---afeter---');
-    });
-    it('labeltest', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var data;
+var chai_1 = require("chai");
+var request = require('supertest');
+var index = require('../index');
+var testImg = '/Users/jean/JEAN/JeansProject/SCCAP/back/src/testimg/bunny.jpeg';
+describe('POST /getIdx/labellist', function () {
+    it('/', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, detecting.DetectingLabel(function (data) { return console.log(data); })];
+                case 0: return [4 /*yield*/, request(index).post('/getIdx/labellist').send({ filename: testImg })];
                 case 1:
-                    data = _a.sent();
-                    console.log(data);
+                    res = _a.sent();
+                    console.log(res.body);
+                    chai_1.expect(res.body).to.equal('');
                     return [2 /*return*/];
             }
         });
