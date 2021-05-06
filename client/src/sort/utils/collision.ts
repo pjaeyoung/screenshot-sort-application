@@ -1,4 +1,4 @@
-import { LayoutRectangle, GestureResponderEvent } from 'react-native';
+import { GestureResponderEvent } from 'react-native';
 
 interface Dimensions {
   x: number;
@@ -7,75 +7,109 @@ interface Dimensions {
   width: number;
 }
 
+export interface Dropzone {
+  id: string;
+  path: string;
+  dimensions: Dimensions;
+}
 interface IntersectionEvent {
-  target: Dimensions;
-  source: Dimensions;
+  target: { dimensions: Dimensions };
+  source: Dropzone;
   minPercentage: number;
-  cb: () => void;
+  cb: (dropzone: Dropzone) => void;
 }
 
-export function isCollided({ target, source }: { target: Dimensions; source: Dimensions }) {
+export function isCollided({
+  targetDimensions,
+  sourceDimensions,
+}: {
+  targetDimensions: Dimensions;
+  sourceDimensions: Dimensions;
+}) {
   return (
-    target.x < source.x + source.width &&
-    target.x + target.width > source.x &&
-    target.y < source.y + source.height &&
-    target.y + target.height > source.y
+    targetDimensions.x < sourceDimensions.x + sourceDimensions.width &&
+    targetDimensions.x + targetDimensions.width > sourceDimensions.x &&
+    targetDimensions.y < sourceDimensions.y + sourceDimensions.height &&
+    targetDimensions.y + targetDimensions.height > sourceDimensions.y
   );
 }
 
-export function getIntersection({ target, source }: { target: Dimensions; source: Dimensions }) {
+export function getIntersection({
+  targetDimensions,
+  sourceDimensions,
+}: {
+  targetDimensions: Dimensions;
+  sourceDimensions: Dimensions;
+}) {
   const intersection = { x: 0, y: 0, width: 0, height: 0 };
-  intersection.x = Math.max(target.x, source.x);
-  intersection.y = Math.max(target.y, source.y);
-  intersection.width = Math.min(target.x + target.width, source.x + source.width) - intersection.x;
+  intersection.x = Math.max(targetDimensions.x, sourceDimensions.x);
+  intersection.y = Math.max(targetDimensions.y, sourceDimensions.y);
+  intersection.width =
+    Math.min(
+      targetDimensions.x + targetDimensions.width,
+      sourceDimensions.x + sourceDimensions.width,
+    ) - intersection.x;
   intersection.height =
-    Math.min(target.y + target.height, source.y + source.height) - intersection.y;
+    Math.min(
+      targetDimensions.y + targetDimensions.height,
+      sourceDimensions.y + sourceDimensions.height,
+    ) - intersection.y;
 
   return intersection;
 }
 
 export function getIntersectionPercentage({
-  intersection,
-  target,
+  intersectionDimensions,
+  targetDimensions,
 }: {
-  intersection: Dimensions;
-  target: Dimensions;
+  intersectionDimensions: Dimensions;
+  targetDimensions: Dimensions;
 }) {
   return Math.ceil(
-    ((intersection.width * intersection.height) / (target.height * target.width)) * 100,
+    ((intersectionDimensions.width * intersectionDimensions.height) /
+      (targetDimensions.height * targetDimensions.width)) *
+      100,
   );
 }
 
 export function onIntersect({ target, source, minPercentage, cb }: IntersectionEvent) {
-  if (!isCollided({ target, source })) return;
+  if (!isCollided({ targetDimensions: target.dimensions, sourceDimensions: source.dimensions }))
+    return;
 
   if (
-    getIntersectionPercentage({ intersection: getIntersection({ target, source }), target }) >=
-    minPercentage
+    getIntersectionPercentage({
+      intersectionDimensions: getIntersection({
+        targetDimensions: target.dimensions,
+        sourceDimensions: source.dimensions,
+      }),
+      targetDimensions: target.dimensions,
+    }) >= minPercentage
   ) {
-    cb();
+    cb(source);
   }
 }
 
 export function onIntersectDropzones({
-  dropzoneDimensions,
+  dropzones,
   cb,
   minPercentage = 60,
 }: {
-  dropzoneDimensions: LayoutRectangle[];
-  cb: () => void;
+  dropzones: Dropzone[];
+  cb: (dropzone: Dropzone) => void;
   minPercentage?: number;
 }) {
   return (event: GestureResponderEvent) => {
     const { pageX, pageY, locationX, locationY } = event.nativeEvent;
     const draggable = {
-      x: pageX - locationX,
-      y: pageY - locationY,
-      width: 100,
-      height: 150,
+      dimensions: {
+        x: pageX - locationX,
+        y: pageY - locationY,
+        width: 100,
+        height: 150,
+      },
     };
 
-    dropzoneDimensions.forEach(dropzone => {
+    dropzones.forEach(dropzone => {
       onIntersect({ target: draggable, source: dropzone, minPercentage, cb });
     });
   };

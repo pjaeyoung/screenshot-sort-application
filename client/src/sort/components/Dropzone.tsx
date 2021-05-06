@@ -1,20 +1,26 @@
 import * as React from 'react';
-import { LayoutChangeEvent, LayoutRectangle } from 'react-native';
-
+import { LayoutChangeEvent } from 'react-native';
+import * as Collision from '@/sort/utils/collision';
 interface DropzoneProps {
-  addDropzoneDimensions: (dimensions: LayoutRectangle) => void;
+  id: string;
+  path: string;
+  addDropzones: (dimensions: Collision.Dropzone) => void;
   children: React.ReactElement;
 }
 
-const Dropzone: React.FC<DropzoneProps> = ({ addDropzoneDimensions, children }) => {
+const Dropzone: React.FC<DropzoneProps> = ({ id, path, addDropzones, children }) => {
   const onLayout = React.useCallback((event: LayoutChangeEvent) => {
     const { height, width, x, y } = event.nativeEvent.layout;
 
-    addDropzoneDimensions({
-      height: Math.round(height),
-      width: Math.round(width),
-      x: Math.round(x),
-      y: Math.round(y),
+    addDropzones({
+      id,
+      path,
+      dimensions: {
+        height: Math.round(height),
+        width: Math.round(width),
+        x: Math.round(x),
+        y: Math.round(y),
+      },
     });
   }, []);
 
