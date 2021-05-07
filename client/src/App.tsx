@@ -18,7 +18,7 @@ import { navigationRef } from './RootNavigation';
 import { MainScreen } from '@/main/components';
 import { SortScreen } from '@/sort/components';
 import { FolderDesignScreen } from '@/main/components';
-import MakeFolderScreen from './main/components/MakeFolderScreen';
+import FolderSettingScreen from '@/main/components/FolderSettingScreen';
 const Stack = createStackNavigator();
 
 const App: React.FC<void> = () => {
@@ -35,7 +35,7 @@ const App: React.FC<void> = () => {
         <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="Sort" component={SortScreen} />
         <Stack.Screen name="FolderDesign" component={FolderDesignScreen} />
-        <Stack.Screen name="FolderSetting" component={MakeFolderScreen} />
+        <Stack.Screen name="FolderSetting" component={FolderSettingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
