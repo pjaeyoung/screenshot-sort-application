@@ -8,12 +8,27 @@ import * as Collision from '@/sort/utils/collision';
 import Dropzone from '@/sort/components/Dropzone';
 
 import Folder from '@/sort/components/Folder';
-import { defaultBorderColors } from '@/shared/constants';
+import { defaultFolderData } from '@/shared/constants';
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faTrashAlt, faShareAlt } from '@fortawesome/free-solid-svg-icons';
+
+import useUserFolders from '@/shared/hooks/useUserFolders';
+import { userFolderLayoutData } from '@/sort/constants/folderLayoutData';
+import { FolderDisplayType, IconFolderDisplayType } from '@/shared/types';
+import iconFolderData from '../constants/iconFolderData';
 
 const Sort: React.FC<Object> = () => {
+  const { userFolders } = useUserFolders();
+  const folders: FolderDisplayType[] = [
+    ...userFolders.map((folder, index) => ({
+      ...folder,
+      ...userFolderLayoutData[index],
+      component: 'text',
+    })),
+    defaultFolderData,
+    ...iconFolderData,
+  ];
+
   const [screenshotPath] = useScreenshotPath();
 
   const [dropzones, setDropzones] = React.useState<Collision.Dropzone[]>([]);
@@ -50,72 +65,24 @@ const Sort: React.FC<Object> = () => {
         style={{ flex: 1 }}
         imageStyle={{ opacity: 0.2 }}
         source={{ uri: screenshotPath }}>
-        <Dropzone id="ajeowarowenoaei180valkn" path="중요" addDropzones={addDropzones}>
-          <Folder
-            borderColor={defaultBorderColors[0]}
-            positions={{ left: -40, top: -20 }}
-            height={200}
-            width={200}>
-            <Text>중요</Text>
-          </Folder>
-        </Dropzone>
-        <Folder
-          borderColor={defaultBorderColors[1]}
-          positions={{ right: -30, top: -20 }}
-          height={150}
-          width={150}>
-          <Text>웃긴 거</Text>
-        </Folder>
-        <Folder
-          borderColor={defaultBorderColors[2]}
-          positions={{ left: -30, top: 230 }}
-          height={150}
-          width={150}>
-          <Text>wish list</Text>
-        </Folder>
-        <Folder
-          borderColor={defaultBorderColors[3]}
-          positions={{ right: -30, top: 150 }}
-          height={120}
-          width={120}>
-          <Text>💖</Text>
-        </Folder>
-        <Folder
-          borderColor={defaultBorderColors[4]}
-          positions={{ left: -30, top: 420 }}
-          height={120}
-          width={120}>
-          <Text>✏️ 글</Text>
-        </Folder>
-        <Folder
-          borderColor={defaultBorderColors[5]}
-          positions={{ right: -30, top: 300 }}
-          height={110}
-          width={110}>
-          <Text>잡학</Text>
-        </Folder>
-        <Folder
-          borderColor={defaultBorderColors[6]}
-          positions={{ right: 130, bottom: -40 }}
-          height={150}
-          width={150}>
-          <FontAwesomeIcon icon={faShareAlt} />
-        </Folder>
-        <Folder
-          borderColor={defaultBorderColors[7]}
-          positions={{ right: -30, bottom: -20 }}
-          height={150}
-          width={150}>
-          <FontAwesomeIcon icon={faTrashAlt} />
-        </Folder>
-        <Folder
-          borderColor={defaultBorderColors[8]}
-          borderDashed
-          positions={{ left: -30, bottom: 20 }}
-          height={150}
-          width={150}>
-          <Text>기본</Text>
-        </Folder>
+        {folders.map(folder => {
+          return (
+            <Dropzone id={folder.id} path={folder.name} addDropzones={addDropzones} key={folder.id}>
+              <Folder
+                borderColor={folder.borderColor}
+                borderDashed={folder.borderDashed}
+                positions={folder.positions}
+                height={folder.height}
+                width={folder.width}>
+                {folder.component === 'text' ? (
+                  <Text>{folder.name}</Text>
+                ) : (
+                  <FontAwesomeIcon icon={(folder as IconFolderDisplayType).icon} />
+                )}
+              </Folder>
+            </Dropzone>
+          );
+        })}
         <Screenshot onDrag={onDrag} onDragRelease={onDragRelease} filePath={screenshotPath} />
       </ImageBackground>
     </View>
@@ -135,6 +102,7 @@ const changeScreenshotPath = async ({
 }) => {
   try {
     // 스크린샷 폴더 경로 수정
+    console.log(destinationFolderName);
     cb();
   } catch (error) {
     // TODO: 폴더 경로 변경 실패 alarm
@@ -144,5 +112,6 @@ const changeScreenshotPath = async ({
 
 const intersectOnDragging = dropzone => {
   // TODO: 폴더 이미지 크기 애니메이션 추가
+
   console.log('drag');
 };

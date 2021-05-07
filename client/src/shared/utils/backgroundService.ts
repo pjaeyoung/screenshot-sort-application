@@ -1,7 +1,6 @@
 import BackgroundService from 'react-native-background-actions';
 import { addScreenshotListener } from 'react-native-detector';
 import * as RNFS from 'react-native-fs';
-import storage from '@/shared/utils/handleAsyncStorage';
 
 import { openApp } from 'rn-openapp';
 import * as RootNavigation from '@/RootNavigation';
@@ -31,7 +30,6 @@ const userDidScreenshot = (): void => {
     .then(async result => {
       const lastIndex = result.length - 1;
       setScreenshotPath(result[lastIndex].path);
-      await storage.storeCurrentScreenshot(result[lastIndex]);
     })
     .catch(e => console.warn(e));
 };

@@ -9,10 +9,11 @@ interface ScreenshotProps {
   filePath: string;
 }
 
+// TODO: 드롭 실패시에만 reverse하도록 변경
 const Screenshot: React.FC<ScreenshotProps> = ({ onDrag, onDragRelease, filePath }) => {
   return (
     <Wrapper>
-      <Draggable onDrag={onDrag} onDragRelease={onDragRelease} shouldReverse>
+      <Draggable onDrag={onDrag} onDragRelease={onDragRelease}>
         <ScreenshotContainer>
           <ScreenshotImage source={{ uri: filePath }} />
         </ScreenshotContainer>

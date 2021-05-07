@@ -1,41 +1,66 @@
-import React, { useState } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React from 'react';
+import { Text, TextInput, View } from 'react-native';
 
-import MakeFolderScreen from './MakeFolderScreen';
-import FloatButton from './FloatButton'
-/** ActionButton type 에서 에러 나지만 없으면 아이콘이 ? 가 뜸 */
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
-function onButtonMakeFolder(props: any){
-  console.log(`${props} 렌더`)
-}
+import Folder from '@/sort/components/Folder';
+import { folderLayoutData } from '@/main/constants/folderLayoutData';
+import useUserFolders from '@/shared/hooks/useUserFolders';
+import FloatButton from './FloatButton';
 
 const MainScreen: React.FC<Object> = () => {
-  // 여기서 폴더 설정 버튼 클릭여부를 state로 관리 
-  // 예) isButtonClicked ? MakeFolderScreen 화면 : 메인-00 화면 
+  const { userFolders } = useUserFolders();
 
-  
   return (
-    <>
-    <View style={styles.container}>
-      <Text>MainScreen</Text>
-      <View style={styles.floatbutton}>
-      <FloatButton/>
+    <View style={{ flex: 1, paddingHorizontal: 40, backgroundColor: '#F7F7F7' }}>
+      <View
+        style={{
+          position: 'relative',
+          marginTop: 40,
+          display: 'flex',
+          justifyContent: 'center',
+        }}>
+        <FontAwesomeIcon
+          icon={faSearch}
+          style={{ position: 'absolute', color: '#55ACF9', left: 20 }}
+        />
+        <TextInput
+          style={{
+            height: 50,
+            borderWidth: 1.5,
+            borderColor: '#55ACF9',
+            borderRadius: 40,
+            paddingHorizontal: 20,
+            paddingLeft: 45,
+          }}
+        />
+      </View>
+      <View style={{ flex: 1 }}>
+        {userFolders.map((folder, index) => {
+          // TODO: 개수에 따라 다른 folderLayoutData 들고오기
+          const { positions, height, width } = folderLayoutData[index];
+          return (
+            <Folder
+              key={folder.id}
+              borderColor={folder.borderColor}
+              positions={positions}
+              height={height}
+              width={width}>
+              <Text>{folder.name}</Text>
+            </Folder>
+          );
+        })}
+      </View>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'transparent',
+        }}>
+        <FloatButton />
       </View>
     </View>
-    </>
   );
 };
 
 export default MainScreen;
-
-
-const styles = StyleSheet.create({
-  container:{
-   flex:1,
-  }
-  ,
-  floatbutton:{
-    flex:1,
-    backgroundColor:"transparent"
-  }
-})

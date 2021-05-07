@@ -1,6 +1,6 @@
 import { GestureResponderEvent } from 'react-native';
 
-interface Dimensions {
+interface DimensionsType {
   x: number;
   y: number;
   height: number;
@@ -10,10 +10,10 @@ interface Dimensions {
 export interface Dropzone {
   id: string;
   path: string;
-  dimensions: Dimensions;
+  dimensions: DimensionsType;
 }
 interface IntersectionEvent {
-  target: { dimensions: Dimensions };
+  target: { dimensions: DimensionsType };
   source: Dropzone;
   minPercentage: number;
   cb: (dropzone: Dropzone) => void;
@@ -23,8 +23,8 @@ export function isCollided({
   targetDimensions,
   sourceDimensions,
 }: {
-  targetDimensions: Dimensions;
-  sourceDimensions: Dimensions;
+  targetDimensions: DimensionsType;
+  sourceDimensions: DimensionsType;
 }) {
   return (
     targetDimensions.x < sourceDimensions.x + sourceDimensions.width &&
@@ -38,8 +38,8 @@ export function getIntersection({
   targetDimensions,
   sourceDimensions,
 }: {
-  targetDimensions: Dimensions;
-  sourceDimensions: Dimensions;
+  targetDimensions: DimensionsType;
+  sourceDimensions: DimensionsType;
 }) {
   const intersection = { x: 0, y: 0, width: 0, height: 0 };
   intersection.x = Math.max(targetDimensions.x, sourceDimensions.x);
@@ -62,8 +62,8 @@ export function getIntersectionPercentage({
   intersectionDimensions,
   targetDimensions,
 }: {
-  intersectionDimensions: Dimensions;
-  targetDimensions: Dimensions;
+  intersectionDimensions: DimensionsType;
+  targetDimensions: DimensionsType;
 }) {
   return Math.ceil(
     ((intersectionDimensions.width * intersectionDimensions.height) /

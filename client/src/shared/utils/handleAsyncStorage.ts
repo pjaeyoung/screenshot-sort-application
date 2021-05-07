@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as RNFS from 'react-native-fs';
+import { FolderType } from '../types';
 
 function storeDataCurry<T>(key: string) {
   return async function storeData(value: T) {
@@ -26,8 +26,8 @@ function getDataCurry<T>(key: string) {
 }
 
 const storage = {
-  storeCurrentScreenshot: storeDataCurry<RNFS.ReadDirItem>('currentScreenshot'),
-  getCurrentScreenshot: getDataCurry<RNFS.ReadDirItem>('currentScreenshot'),
+  storeFolders: storeDataCurry<FolderType[]>('folders'),
+  getFolders: getDataCurry<FolderType[]>('folders'),
 };
 
 export default storage;
