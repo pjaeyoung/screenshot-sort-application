@@ -34,8 +34,8 @@ const App: React.FC<void> = () => {
         }}>
         <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="Sort" component={SortScreen} />
-        <Stack.Screen name="FolderDesign" component={FolderDesignScreen} /> 
-        <Stack.Screen name="AddingFolder" component={MakeFolderScreen}/> 
+        <Stack.Screen name="FolderDesign" component={FolderDesignScreen} />
+        <Stack.Screen name="FolderSetting" component={MakeFolderScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
