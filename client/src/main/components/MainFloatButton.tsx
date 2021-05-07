@@ -1,11 +1,9 @@
 import React from 'react';
 import ActionButton from '@/shared/utils/react-native-action-button';
 import styled from '@emotion/native';
-import { Text, View } from 'react-native';
 import { navigate } from '@/RootNavigation';
 
 const MainFloatButton = () => {
-  const [active, setActive] = React.useState(false);
   return (
     <ActionButton
       buttonColor="#2699fb"
@@ -15,7 +13,6 @@ const MainFloatButton = () => {
       <ActionButtonItem
         onPress={() => {
           navigate('FolderSetting', {});
-          setActive(false);
         }}>
         <ActionButtonText>폴더 설정</ActionButtonText>
       </ActionButtonItem>
