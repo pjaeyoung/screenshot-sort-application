@@ -17,8 +17,8 @@ import { navigationRef } from './RootNavigation';
 
 import { MainScreen } from '@/main/components';
 import { SortScreen } from '@/sort/components';
-import { FolderDesignScreen } from '@/main/components';
-import FolderSettingScreen from '@/main/components/FolderSettingScreen';
+import { FolderDesignScreen } from '@/folderDesign/components';
+import { FolderSettingScreen } from '@/folderSetting/components';
 const Stack = createStackNavigator();
 
 const App: React.FC<void> = () => {

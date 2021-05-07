@@ -1,37 +1,25 @@
-import React, { useState } from 'react';
-import { Text, View, StyleSheet, TextInput, Dimensions, Button } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { navigate } from '@/RootNavigation';
 
-import ActionButton from '../../shared/utils/react-native-action-button';
+import ActionButton from '@/shared/utils/react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
-const RenderActionButton = () => {
-  return (
-    <ActionButton
-      buttonColor="rgba(0,0,255,1)"
-      renderIcon={() => (
-        <Icon name="checkmark" type="material" style={styles.actionButtonIcon} />
-      )}></ActionButton>
-  );
-};
 
 const onPress = () => {
   navigate('FolderDesign', {});
 };
 
-const FolderSettingScreen: React.FC<Object> = () => {
+const FolderSettingScreen: React.FC<void> = () => {
   return (
     <View style={styles.container}>
-      <View style={styles.newFolderShape}>
-        <TextInput>Foldername</TextInput>
-      </View>
       <View style={styles.plusButtonWrapper}>
         <TouchableOpacity style={styles.plusButton} onPress={onPress}>
           <Icon name="add" type="material" style={styles.actionButtonIcon} />
         </TouchableOpacity>
       </View>
-      <RenderActionButton />
+      <ActionButton
+        buttonColor="rgba(0,0,255,1)"
+        renderIcon={() => <Icon name="checkmark" style={styles.actionButtonIcon} />}></ActionButton>
     </View>
   );
 };
