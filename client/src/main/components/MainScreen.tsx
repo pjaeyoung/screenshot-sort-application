@@ -42,7 +42,7 @@ const MainScreen: React.FC<Object> = () => {
           const { positions, height, width } = folderLayoutData[index];
           return (
             <Folder
-              key={folder.id}
+              key={index}
               borderColor={folder.borderColor}
               positions={positions}
               height={height}
