@@ -13,7 +13,7 @@ import requestPermissions from '@/shared/utils/requestPermissions';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { navigationRef } from './RootNavigation';
+import { navigationRef } from '@/RootNavigation';
 
 import { MainScreen } from '@/main/components';
 import { SortScreen } from '@/sort/components';

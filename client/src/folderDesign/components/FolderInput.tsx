@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextInput, GestureResponderHandlers, Alert } from 'react-native';
 import styled from '@emotion/native';
-import { navigate, reset } from '@/RootNavigation';
+import { navigate } from '@/RootNavigation';
 import useUserFolders from '@/shared/hooks/useUserFolders';
 
 interface FolderInputProps {
@@ -36,7 +36,7 @@ const FolderInput: React.FC<FolderInputProps> = ({
             borderColor,
             borderDashed: false,
           });
-          reset('FolderSetting', {});
+          navigate('FolderSetting', {});
         }}
       />
     </Wrapper>
