@@ -7,7 +7,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Folder from '@/sort/components/Folder';
 import { folderLayoutData } from '@/main/constants/folderLayoutData';
 import useUserFolders from '@/shared/hooks/useUserFolders';
-import FloatButton from './FloatButton';
+import MainFloatButton from './MainFloatButton';
 
 const MainScreen: React.FC<Object> = () => {
   const { userFolders } = useUserFolders();
@@ -42,7 +42,7 @@ const MainScreen: React.FC<Object> = () => {
           const { positions, height, width } = folderLayoutData[index];
           return (
             <Folder
-              key={folder.id}
+              key={index}
               borderColor={folder.borderColor}
               positions={positions}
               height={height}
@@ -52,13 +52,7 @@ const MainScreen: React.FC<Object> = () => {
           );
         })}
       </View>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: 'transparent',
-        }}>
-        <FloatButton />
-      </View>
+      <MainFloatButton />
     </View>
   );
 };

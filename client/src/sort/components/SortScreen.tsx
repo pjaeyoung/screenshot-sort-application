@@ -2,7 +2,6 @@ import * as React from 'react';
 import { View, Text, BackHandler, ImageBackground } from 'react-native';
 
 import Screenshot from '@/sort/components/Screenshot';
-import useScreenshotPath from '@/sort/hooks/useScreenshotPath';
 
 import * as Collision from '@/sort/utils/collision';
 import Dropzone from '@/sort/components/Dropzone';
@@ -16,6 +15,7 @@ import useUserFolders from '@/shared/hooks/useUserFolders';
 import { userFolderLayoutData } from '@/sort/constants/folderLayoutData';
 import { FolderDisplayType, IconFolderDisplayType } from '@/shared/types';
 import iconFolderData from '../constants/iconFolderData';
+import { useRoute } from '@react-navigation/core';
 
 const Sort: React.FC<Object> = () => {
   const { userFolders } = useUserFolders();
@@ -29,7 +29,9 @@ const Sort: React.FC<Object> = () => {
     ...iconFolderData,
   ];
 
-  const [screenshotPath] = useScreenshotPath();
+  const {
+    params: { screenshotPath },
+  } = useRoute();
 
   const [dropzones, setDropzones] = React.useState<Collision.Dropzone[]>([]);
   const addDropzones = (dropzone: Collision.Dropzone) => {

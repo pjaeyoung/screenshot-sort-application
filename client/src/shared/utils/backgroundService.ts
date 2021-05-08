@@ -3,25 +3,15 @@ import { addScreenshotListener } from 'react-native-detector';
 import * as RNFS from 'react-native-fs';
 
 import { openApp } from 'rn-openapp';
-import * as RootNavigation from '@/RootNavigation';
+import { navigate } from '@/RootNavigation';
 
 const packageId = 'com.sccap.sccap';
-
-let screenshotPath = '';
-export function setScreenshotPath(string: string) {
-  screenshotPath = string;
-}
-
-export function getScreenshotPath() {
-  return screenshotPath;
-}
 
 const userDidScreenshot = (): void => {
   openApp(packageId)
     .then(isOpenedApp => {
       if (isOpenedApp) {
         // FIXME : 모든 안드로이드 기기에 대응할 수 있도록 파일 경로를 수정해야 합니다.
-        RootNavigation.navigate('Sort', {});
         return RNFS.readDir(`${RNFS.ExternalStorageDirectoryPath}/DCIM/Screenshots`);
       } else {
         throw new Error('ScCap 앱 실행이 실패했습니다.');
@@ -29,7 +19,7 @@ const userDidScreenshot = (): void => {
     })
     .then(async result => {
       const lastIndex = result.length - 1;
-      setScreenshotPath(result[lastIndex].path);
+      navigate('Sort', { screenshotPath: `file://${result[lastIndex].path}` });
     })
     .catch(e => console.warn(e));
 };
