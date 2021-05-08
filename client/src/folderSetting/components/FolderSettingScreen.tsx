@@ -4,8 +4,6 @@ import styled from '@emotion/native';
 import CreateFolderButton from '@/folderSetting/components/CreateFolderButton';
 import CompleteButton from '@/folderSetting/components/CompleteButton';
 
-import useUserFolders from '@/shared/hooks/useUserFolders';
-
 import { RemovableFolderDisplayType } from '@/shared/types';
 import { defaultFolderData } from '@/shared/constants';
 import userFolderLayoutData from '@/folderSetting/constants/folderLayoutData';
@@ -13,9 +11,19 @@ import userFolderLayoutData from '@/folderSetting/constants/folderLayoutData';
 import { View, Text, Alert } from 'react-native';
 import Folder from '@/sort/components/Folder';
 
+import { useFolderRedux } from '@/store';
+
 const FolderSettingScreen: React.FC<void> = () => {
-  const { userFolders, removeUserFolder } = useUserFolders();
-  const folders: RemovableFolderDisplayType[] = [
+  const { userFolders, removeUserFolder } = useFolderRedux();
+
+  const [isClicked, setIsClicked] = React.useState(false);
+
+  const onPressRemoveButtonCallbback = (id: string) => {
+    removeUserFolder(id);
+    setIsClicked(prev => !prev);
+  };
+
+  let folders: RemovableFolderDisplayType[] = [
     ...userFolders.map((folder, index) => ({
       ...folder,
       ...userFolderLayoutData[index],
@@ -37,7 +45,7 @@ const FolderSettingScreen: React.FC<void> = () => {
             width={folder.width}>
             <Text>{folder.name}</Text>
             <RemoveButton
-              onPress={onPressRemoveButton(folder, removeUserFolder)}
+              onPress={onPressRemoveButton(folder, onPressRemoveButtonCallbback)}
               {...folder.removeButtonHorizontalDirection}>
               <RemoveButtonItem>-</RemoveButtonItem>
             </RemoveButton>

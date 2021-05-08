@@ -6,11 +6,11 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import Folder from '@/sort/components/Folder';
 import { folderLayoutData } from '@/main/constants/folderLayoutData';
-import useUserFolders from '@/shared/hooks/useUserFolders';
+import { useFolderRedux } from '@/store';
 import MainFloatButton from './MainFloatButton';
 
 const MainScreen: React.FC<Object> = () => {
-  const { userFolders } = useUserFolders();
+  const { userFolders } = useFolderRedux();
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 40, backgroundColor: '#F7F7F7' }}>

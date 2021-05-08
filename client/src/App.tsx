@@ -19,6 +19,10 @@ import { MainScreen } from '@/main/components';
 import { SortScreen } from '@/sort/components';
 import { FolderDesignScreen } from '@/folderDesign/components';
 import { FolderSettingScreen } from '@/folderSetting/components';
+
+import { Provider } from 'react-redux';
+import store from '@/store';
+
 const Stack = createStackNavigator();
 
 const App: React.FC<void> = () => {
@@ -27,17 +31,19 @@ const App: React.FC<void> = () => {
   }, []);
 
   return (
-    <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Screen name="Main" component={MainScreen} />
-        <Stack.Screen name="Sort" component={SortScreen} />
-        <Stack.Screen name="FolderDesign" component={FolderDesignScreen} />
-        <Stack.Screen name="FolderSetting" component={FolderSettingScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer ref={navigationRef}>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen name="Main" component={MainScreen} />
+          <Stack.Screen name="Sort" component={SortScreen} />
+          <Stack.Screen name="FolderDesign" component={FolderDesignScreen} />
+          <Stack.Screen name="FolderSetting" component={FolderSettingScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 };
 
