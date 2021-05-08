@@ -10,7 +10,7 @@ import { RemovableFolderDisplayType } from '@/shared/types';
 import { defaultFolderData } from '@/shared/constants';
 import userFolderLayoutData from '@/folderSetting/constants/folderLayoutData';
 
-import { View, Text } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import Folder from '@/sort/components/Folder';
 
 const FolderSettingScreen: React.FC<void> = () => {
@@ -37,7 +37,7 @@ const FolderSettingScreen: React.FC<void> = () => {
             width={folder.width}>
             <Text>{folder.name}</Text>
             <RemoveButton
-              onPress={() => removeUserFolder(folder.id)}
+              onPress={onPressRemoveButton(folder, removeUserFolder)}
               {...folder.removeButtonHorizontalDirection}>
               <RemoveButtonItem>-</RemoveButtonItem>
             </RemoveButton>
@@ -48,6 +48,26 @@ const FolderSettingScreen: React.FC<void> = () => {
       <CompleteButton />
     </Wrapper>
   );
+};
+
+const onPressRemoveButton = (
+  folder: RemovableFolderDisplayType,
+  removeUserFolder: (id: string) => void,
+) => {
+  return () => {
+    Alert.alert('폴더를 삭제하시겠습니까?', undefined, [
+      {
+        text: '취소',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: '삭제',
+        onPress: () => removeUserFolder(folder.id),
+        style: 'destructive',
+      },
+    ]);
+  };
 };
 
 const Wrapper = styled.View({
