@@ -16,9 +16,10 @@ import { userFolderLayoutData } from '@/sort/constants/folderLayoutData';
 import { FolderDisplayType, IconFolderDisplayType } from '@/shared/types';
 import iconFolderData from '../constants/iconFolderData';
 import { useRoute } from '@react-navigation/core';
+import { useFolderRedux } from '@/store';
 
 const Sort: React.FC<Object> = () => {
-  const { userFolders } = useUserFolders();
+  const { userFolders } = useFolderRedux();
   const folders: FolderDisplayType[] = [
     ...userFolders.map((folder, index) => ({
       ...folder,
