@@ -5,9 +5,11 @@ import CreateFolderButton from '@/folderSetting/components/CreateFolderButton';
 import CompleteButton from '@/folderSetting/components/CompleteButton';
 
 import useUserFolders from '@/shared/hooks/useUserFolders';
+
 import { RemovableFolderDisplayType } from '@/shared/types';
 import { defaultFolderData } from '@/shared/constants';
 import userFolderLayoutData from '@/folderSetting/constants/folderLayoutData';
+
 import { View, Text, Alert } from 'react-native';
 import Folder from '@/sort/components/Folder';
 
