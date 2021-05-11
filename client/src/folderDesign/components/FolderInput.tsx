@@ -34,12 +34,15 @@ const FolderInput: React.FC<FolderInputProps> = ({
         value={folderName}
         onChangeText={setFolderName}
         onSubmitEditing={() => {
-          addUserFolder({
-            id: `folder-${Date.now()}`,
-            name: folderName,
-            borderColor,
-            borderDashed: false,
-          });
+          if (folderName) {
+            addUserFolder({
+              id: `folder-${Date.now()}`,
+              name: folderName,
+              borderColor,
+              borderDashed: false,
+            });
+          }
+
           navigate('FolderSetting', {});
         }}
       />
