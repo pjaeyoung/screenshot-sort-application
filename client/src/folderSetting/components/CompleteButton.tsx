@@ -1,19 +1,13 @@
 import * as React from 'react';
-
-import ActionButton from '@/shared/utils/react-native-action-button';
-import Icon from 'react-native-vector-icons/Ionicons';
+import styled from '@emotion/native';
 
 import { navigate } from '@/RootNavigation';
 
 const CompleteButton: React.FC = () => {
   return (
-    <ActionButton
-      onPress={onPress}
-      buttonColor="#2699fb"
-      renderIcon={() => (
-        <Icon name="checkmark" style={{ fontSize: 25, height: 22, color: 'white' }} />
-      )}
-    />
+    <Button onPress={onPress}>
+      <CheckIcon>&#10003;</CheckIcon>
+    </Button>
   );
 };
 
@@ -22,3 +16,29 @@ export default CompleteButton;
 const onPress = () => {
   navigate('Main', {});
 };
+
+const Button = styled.TouchableOpacity({
+  position: 'absolute',
+  right: 50,
+  bottom: 50,
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: 50,
+  height: 50,
+  borderRadius: 50,
+  backgroundColor: '#2699fb',
+  shadowOpacity: 0.35,
+  shadowOffset: {
+    width: 0,
+    height: 5,
+  },
+  shadowColor: '#000000',
+  shadowRadius: 3,
+  elevation: 5,
+});
+
+const CheckIcon = styled.Text({
+  color: '#fff',
+  fontSize: 20,
+  fontWeight: 'bold',
+});

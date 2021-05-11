@@ -1,6 +1,6 @@
 import { configureStore, createSlice, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { FolderType } from '@/shared/types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const folderSlice = createSlice<FolderType[], SliceCaseReducers<FolderType[]>, 'folders'>({
   name: 'folders',
@@ -30,11 +30,9 @@ export const useFolderRedux = () => {
     dispatch(decrement({ id }));
   };
 
-  return { userFolders: store.getState(), addUserFolder, removeUserFolder };
-};
+  const userFolders = useSelector((state: FolderType[]) => state);
 
-store.subscribe(() => {
-  console.log(store.getState());
-});
+  return { userFolders, addUserFolder, removeUserFolder };
+};
 
 export default store;

@@ -11,7 +11,6 @@ import { defaultFolderData } from '@/shared/constants';
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
-import useUserFolders from '@/shared/hooks/useUserFolders';
 import { userFolderLayoutData } from '@/sort/constants/folderLayoutData';
 import { FolderDisplayType, IconFolderDisplayType } from '@/shared/types';
 import iconFolderData from '../constants/iconFolderData';

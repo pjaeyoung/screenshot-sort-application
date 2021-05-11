@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, Text } from 'react-native';
 import styled from '@emotion/native';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 import { navigate } from '@/RootNavigation';
 
@@ -9,7 +8,7 @@ const CreateFolderButton: React.FC = () => {
   return (
     <Wrapper>
       <Button onPress={onPress}>
-        <Icon name="add" color="#fff" size={25} />
+        <PlusIcon>+</PlusIcon>
       </Button>
     </Wrapper>
   );
@@ -38,4 +37,14 @@ const Button = styled.TouchableOpacity({
   height: 80,
   borderRadius: 50,
   backgroundColor: '#2699fb',
+  shadowOpacity: 0.35,
+  shadowOffset: {
+    width: 0,
+    height: 5,
+  },
+  shadowColor: '#000000',
+  shadowRadius: 3,
+  elevation: 5,
 });
+
+const PlusIcon = styled.Text({ color: '#fff', fontSize: 30 });
