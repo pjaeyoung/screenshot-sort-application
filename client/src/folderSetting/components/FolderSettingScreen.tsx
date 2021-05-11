@@ -16,11 +16,8 @@ import { useFolderRedux } from '@/store';
 const FolderSettingScreen: React.FC<void> = () => {
   const { userFolders, removeUserFolder } = useFolderRedux();
 
-  const [isClicked, setIsClicked] = React.useState(false);
-
   const onPressRemoveButtonCallbback = (id: string) => {
     removeUserFolder(id);
-    setIsClicked(prev => !prev);
   };
 
   let folders: RemovableFolderDisplayType[] = [

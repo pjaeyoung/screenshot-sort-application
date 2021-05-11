@@ -17,18 +17,22 @@ const FolderInput: React.FC<FolderInputProps> = ({
   folderName,
   setFolderName,
 }) => {
-  const [focused, setFocused] = React.useState<boolean>(true);
+  const inputRef = React.useRef() as React.RefObject<TextInput>;
+  const openKeyboard = () => {
+    inputRef.current?.blur();
+    inputRef.current?.focus();
+  };
   const { addUserFolder } = useFolderRedux();
 
   return (
-    <Wrapper borderColor={borderColor} dashed={focused} {...panHandlers}>
+    <Wrapper borderColor={borderColor} {...panHandlers} onTouchStart={openKeyboard}>
       <TextInput
+        ref={inputRef}
+        style={{ fontSize: 20, textAlign: 'center' }}
+        autoFocus
         placeholder="폴더명을 입력해주세요"
         value={folderName}
         onChangeText={setFolderName}
-        autoFocus
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
         onSubmitEditing={() => {
           addUserFolder({
             id: `folder-${Date.now()}`,
@@ -45,16 +49,17 @@ const FolderInput: React.FC<FolderInputProps> = ({
 
 export default FolderInput;
 
-const Wrapper = styled.View<{ borderColor: string; dashed: boolean }>(props => ({
+const Wrapper = styled.View<{ borderColor: string }>(props => ({
   width: 280,
   height: 280,
   marginLeft: -50,
+  paddingLeft: 20,
   marginTop: -50,
   backgroundColor: '#fff',
   borderRadius: 150,
   borderWidth: 3,
   borderColor: props.borderColor,
-  borderStyle: props.dashed ? 'dashed' : 'solid',
+  borderStyle: 'dashed',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
