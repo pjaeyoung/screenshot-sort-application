@@ -1,6 +1,7 @@
 import defaultBorderColors from './defaultBorderColors';
 import { FolderDisplayType } from '@/shared/types';
 
+// 기본 폴더 정보
 const defaultFolderData: FolderDisplayType = {
   id: 'folder-default',
   component: 'text',

@@ -7,6 +7,9 @@ import { navigate } from './RootNavigation';
 
 const packageId = 'com.sccap.sccap';
 
+// 스크린샷 감지 시 호출하는 콜백함수
+// 앱을 열고 스크린샷 폴더에 접근하여 가장 마지막 스크린샷 이미지 path를 가져와
+// SORT 화면 이동 시 props로 전달
 const userDidScreenshot = (): void => {
   openApp(packageId)
     .then(isOpenedApp => {
@@ -24,6 +27,7 @@ const userDidScreenshot = (): void => {
     .catch(e => console.warn(e));
 };
 
+// 스크린샷 감지 이벤트 등록
 const registerScreenCaptureEvent = () => {
   return new Promise<void>(() => {
     addScreenshotListener(userDidScreenshot);
@@ -46,6 +50,7 @@ const options = {
   },
 };
 
+// 스크린샷 감지 서비스 실행
 function monitorScreenCapture() {
   BackgroundService.start(registerScreenCaptureEvent, options);
 }

@@ -4,6 +4,7 @@ import styled from '@emotion/native';
 
 import { navigate } from '@/shared/utils/RootNavigation';
 
+// FIXME: 스크린 이동 대신 state로 레이아웃 변경할 것 (Depth 줄이기)
 const CreateFolderButton: React.FC = () => {
   return (
     <Wrapper>

@@ -23,6 +23,8 @@ interface SortScreenRouteProps extends RouteProp<ParamListBase, string> {
 
 const Sort: React.FC<Object> = () => {
   const { userFolders } = useUserFolders();
+  // 유저가 생성한 폴더 이미지들과 기본 폴더, 아이콘폴더(공유/휴지통) 합치는 과정
+  // userFolders는 layoutData의 순서대로 위치가 배치된다
   const folders: FolderDisplayType[] = [
     ...userFolders.map((folder, index) => ({
       ...folder,
@@ -33,19 +35,23 @@ const Sort: React.FC<Object> = () => {
     ...iconFolderData,
   ];
 
+  // 스크린샷 감지 서비스로부터 스크린샷 이미지 path 정보를 받아온다
   const route = useRoute<SortScreenRouteProps>();
   const screenshotPath = route.params?.screenshotPath || 'file://';
 
+  // 폴더이미지들을 충돌(겹침) 체크 가능한 dropzones로 지정
   const [dropzones, setDropzones] = React.useState<Collision.Dropzone[]>([]);
   const addDropzones = (dropzone: Collision.Dropzone) => {
     setDropzones(prev => [...prev, dropzone]);
   };
 
+  // 드래그 중 충돌(겹침) 이벤트 등록
   const onDrag = Collision.onIntersectDropzones({
     dropzones,
     cb: intersectOnDragging,
   });
 
+  // 드롭 성공 시 실행할 이벤트
   const intersectOnDropped = (dropzone: Collision.Dropzone) => {
     changeScreenshotPath({
       originPath: screenshotPath,
@@ -56,6 +62,7 @@ const Sort: React.FC<Object> = () => {
     });
   };
 
+  // 드롭 시 충돌(겹침) 이벤트 등록
   const onDragRelease = Collision.onIntersectDropzones({
     dropzones,
     cb: intersectOnDropped,
@@ -106,7 +113,7 @@ const changeScreenshotPath = async ({
   cb: () => void;
 }) => {
   try {
-    // 스크린샷 폴더 경로 수정
+    // TODO: 스크린샷 파일을 해당 폴더에 사본 생성
     console.log(destinationFolderName);
     cb();
   } catch (error) {

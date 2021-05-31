@@ -1,3 +1,4 @@
+// 키보드 상단에 보여질 테두리 색상리스트
 export const pallet = [
   '#2699FB',
   '#0CC2C2',

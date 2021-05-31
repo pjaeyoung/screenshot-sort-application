@@ -1,3 +1,4 @@
+// 키보드 상단에 보여질 추천 폴더명 리스트
 export const recommendedFolderNames = [
   '중요',
   '짤',

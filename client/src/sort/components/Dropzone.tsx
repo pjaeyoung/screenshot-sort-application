@@ -8,7 +8,10 @@ interface DropzoneProps {
   children: React.ReactElement;
 }
 
+// FIXME: HOC으로 Folder 컴포넌트 감싸기
+// TODO:  Animation 기능 추가
 const Dropzone: React.FC<DropzoneProps> = ({ id, path, addDropzones, children }) => {
+  // 폴더 이미지 크기와 위치값 계산
   const onLayout = React.useCallback((event: LayoutChangeEvent) => {
     const { height, width, x, y } = event.nativeEvent.layout;
 
@@ -23,7 +26,7 @@ const Dropzone: React.FC<DropzoneProps> = ({ id, path, addDropzones, children })
       },
     });
   }, []);
-
+  // 자식컴포넌트에 onLayout를 props로 전달
   return <>{React.cloneElement(children, { onLayout })}</>;
 };
 

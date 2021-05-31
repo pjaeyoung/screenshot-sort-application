@@ -15,11 +15,11 @@ import { useUserFolders } from '@/redux/store';
 
 const FolderSettingScreen: React.FC<void> = () => {
   const { userFolders, removeUserFolder } = useUserFolders();
-
+  // 폴더 이미지 삭제 버튼 클릭 이벤트
   const onPressRemoveButtonCallbback = (id: string) => {
     removeUserFolder(id);
   };
-
+  // 유저 폴더 이미지, 기본 폴더 레이아웃 배치
   let folders: RemovableFolderDisplayType[] = [
     ...userFolders.map((folder, index) => ({
       ...folder,
@@ -55,6 +55,7 @@ const FolderSettingScreen: React.FC<void> = () => {
   );
 };
 
+// 삭제 알람창 렌더링
 const onPressRemoveButton = (
   folder: RemovableFolderDisplayType,
   removeUserFolder: (id: string) => void,

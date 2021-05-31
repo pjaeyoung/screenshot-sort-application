@@ -35,6 +35,7 @@ const MainScreen: React.FC<Object> = () => {
       <View style={{ flex: 1 }}>
         {userFolders.map((folder, index) => {
           // TODO: 개수에 따라 다른 folderLayoutData 들고오기
+          // TODO: 폴더 클릭시 CATEGORY 스크린 이동
           const { positions, height, width } = folderLayoutData[index];
           return (
             <Folder

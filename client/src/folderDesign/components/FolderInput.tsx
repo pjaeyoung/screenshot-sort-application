@@ -17,6 +17,7 @@ const FolderInput: React.FC<FolderInputProps> = ({
   folderName,
   setFolderName,
 }) => {
+  // 폴더 이미지 자체를 클릭하면 키보드창 올라오도록 설정
   const inputRef = React.useRef() as React.RefObject<TextInput>;
   const openKeyboard = () => {
     inputRef.current?.blur();
@@ -34,6 +35,7 @@ const FolderInput: React.FC<FolderInputProps> = ({
         value={folderName}
         onChangeText={setFolderName}
         onSubmitEditing={() => {
+          // 폴더명이 빈 문자열이 아닌 경우에만 생성하도록 예외처리
           if (folderName) {
             addUserFolder({
               id: `folder-${Date.now()}`,
@@ -42,7 +44,7 @@ const FolderInput: React.FC<FolderInputProps> = ({
               borderDashed: false,
             });
           }
-
+          // FIXME: 스크린 이동 대신 state 값 변경하여 레이아웃 바꾸기
           navigate('FolderSetting', {});
         }}
       />
