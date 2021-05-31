@@ -1,12 +1,13 @@
 import * as React from 'react';
 import styled from '@emotion/native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { navigate } from '@/RootNavigation';
 
 const CompleteButton: React.FC = () => {
   return (
     <Button onPress={onPress}>
-      <CheckIcon>&#10003;</CheckIcon>
+      <Icon name="check" size={15} color="#ffffff" />
     </Button>
   );
 };

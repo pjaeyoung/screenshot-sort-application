@@ -20,10 +20,6 @@ export interface FolderDisplayType extends FolderType {
   component: string;
 }
 
-export interface IconFolderDisplayType extends FolderDisplayType {
-  icon: IconDefinition; // component가 fontawesome 일 경우
-}
-
 export interface RemovableFolderDisplayType extends FolderDisplayType {
   removeButtonHorizontalDirection: { right?: number; left?: number };
 }

@@ -9,13 +9,17 @@ import Dropzone from '@/sort/components/Dropzone';
 import Folder from '@/sort/components/Folder';
 import { defaultFolderData } from '@/shared/constants';
 
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { userFolderLayoutData } from '@/sort/constants/folderLayoutData';
 import { FolderDisplayType, IconFolderDisplayType } from '@/shared/types';
 import iconFolderData from '../constants/iconFolderData';
-import { useRoute } from '@react-navigation/core';
+import { useRoute, RouteProp, ParamListBase } from '@react-navigation/core';
 import { useFolderRedux } from '@/store';
+
+interface SortScreenRouteProps extends RouteProp<ParamListBase, string> {
+  params?: { screenshotPath: string };
+}
 
 const Sort: React.FC<Object> = () => {
   const { userFolders } = useFolderRedux();
@@ -29,9 +33,8 @@ const Sort: React.FC<Object> = () => {
     ...iconFolderData,
   ];
 
-  const {
-    params: { screenshotPath },
-  } = useRoute();
+  const route = useRoute<SortScreenRouteProps>();
+  const screenshotPath = route.params?.screenshotPath || 'file://';
 
   const [dropzones, setDropzones] = React.useState<Collision.Dropzone[]>([]);
   const addDropzones = (dropzone: Collision.Dropzone) => {
@@ -79,7 +82,7 @@ const Sort: React.FC<Object> = () => {
                 {folder.component === 'text' ? (
                   <Text>{folder.name}</Text>
                 ) : (
-                  <FontAwesomeIcon icon={(folder as IconFolderDisplayType).icon} />
+                  <Icon name={folder.name} size={24} color="black" />
                 )}
               </Folder>
             </Dropzone>

@@ -3,17 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "postinstall": "node-git-hooks",
     "android": "react-native run-android",
     "androidMac": "source ~/.bash_profile&&react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest --passWithNoTests",
     "lint": "eslint --no-error-on-unmatched-pattern --ext .tsx --ext .ts .",
-    "lint-staged": "lint-staged",
-    "devtools": "react-devtools",
-    "kill": "kill -9 $(lsof -t -i:8081)",
-    "dev": "concurrently  \" yarn kill \" & yarn start --reset-cache & yarn android & yarn devtools  "
+    "lint-staged": "lint-staged"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [
@@ -25,9 +21,6 @@
     "@emotion/native": "^11.0.0",
     "@emotion/react": "^11.1.5",
     "@flyerhq/react-native-keyboard-accessory-view": "^2.1.1",
-    "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
-    "@fortawesome/react-native-fontawesome": "^0.2.6",
     "@react-native-async-storage/async-storage": "^1.15.4",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/native": "^5.9.4",
@@ -36,7 +29,6 @@
     "prop-types": "^15.7.2",
     "react": "17.0.1",
     "react-native": "0.64.0",
-    "react-native-action-button": "^2.8.5",
     "react-native-background-actions": "^2.6.0",
     "react-native-detector": "^0.1.2",
     "react-native-draggable": "^3.3.0",
@@ -78,7 +70,6 @@
     "jest": "^26.6.3",
     "lint-staged": "^10.5.4",
     "metro-react-native-babel-preset": "^0.64.0",
-    "node-git-hooks": "^1.0.6",
     "prettier": "^2.2.1",
     "react-devtools": "^4.12.4",
     "react-test-renderer": "17.0.1",

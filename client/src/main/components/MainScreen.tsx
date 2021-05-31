@@ -1,8 +1,7 @@
 import React from 'react';
 import { Text, TextInput, View } from 'react-native';
 
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Folder from '@/sort/components/Folder';
 import { folderLayoutData } from '@/main/constants/folderLayoutData';
@@ -21,10 +20,7 @@ const MainScreen: React.FC<Object> = () => {
           display: 'flex',
           justifyContent: 'center',
         }}>
-        <FontAwesomeIcon
-          icon={faSearch}
-          style={{ position: 'absolute', color: '#55ACF9', left: 20 }}
-        />
+        <Icon name="search" color="#55ACF9" size={18} style={{ position: 'absolute', left: 20 }} />
         <TextInput
           style={{
             height: 50,
