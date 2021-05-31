@@ -1,15 +1,13 @@
 import { defaultBorderColors } from '@/shared/constants';
-import { IconFolderDisplayType } from '@/shared/types';
-import { faShareAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { FolderDisplayType } from '@/shared/types';
 
-const iconFolderData: IconFolderDisplayType[] = [
+const iconFolderData: FolderDisplayType[] = [
   {
     id: 'folder-share',
     component: 'fontawesome',
-    name: 'share',
+    name: 'share-alt',
     borderColor: defaultBorderColors[6],
     borderDashed: false,
-    icon: faShareAlt,
     positions: {
       right: 130,
       bottom: -40,
@@ -20,10 +18,9 @@ const iconFolderData: IconFolderDisplayType[] = [
   {
     id: 'folder-trash',
     component: 'fontawesome',
-    name: '삭제',
+    name: 'trash',
     borderColor: defaultBorderColors[7],
     borderDashed: false,
-    icon: faTrashAlt,
     positions: { right: -30, bottom: -20 },
     height: 150,
     width: 150,

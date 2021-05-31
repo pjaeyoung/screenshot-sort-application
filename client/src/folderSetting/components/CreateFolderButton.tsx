@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dimensions, Text } from 'react-native';
+import { Dimensions } from 'react-native';
 import styled from '@emotion/native';
 
 import { navigate } from '@/RootNavigation';
