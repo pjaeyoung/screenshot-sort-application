@@ -1,6 +1,8 @@
 import { defaultBorderColors } from '@/shared/constants';
 import { FolderDisplayType } from '@/shared/types';
 
+// SORT 화면에 폴더 이미지 배치할 위치를 담은 데이터
+// Folder 컴포넌트의 composition하는 자식 컴포넌트로 Icon 태그를 사용함
 const iconFolderData: FolderDisplayType[] = [
   {
     id: 'folder-share',

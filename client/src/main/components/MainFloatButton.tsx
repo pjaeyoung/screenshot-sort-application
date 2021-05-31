@@ -18,6 +18,8 @@ const actions = [
   },
 ];
 
+// FIXME: 라이브러리에서 key props 에러 발생 및 오버레이 위치 조정 어려움 => 대체 라이브러리 사용 혹은 직접 만들기
+
 const MainFloatButton: React.FC = () => {
   return (
     <FloatingAction
@@ -29,6 +31,7 @@ const MainFloatButton: React.FC = () => {
   );
 };
 
+// FOLDER 화면으로 이동
 const onPressItem = (name: string | undefined) => {
   name && navigate(name, {});
 };

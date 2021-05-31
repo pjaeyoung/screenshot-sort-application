@@ -1,4 +1,3 @@
-import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 export interface FolderType {
   id: string;
   name: string; // 폴더 명

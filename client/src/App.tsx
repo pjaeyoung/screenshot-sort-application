@@ -27,6 +27,7 @@ const Stack = createStackNavigator();
 
 const App: React.FC<void> = () => {
   useEffect(() => {
+    // TODO: 온보딩에서 이뤄질 것. 온보딩에서 허용을 안 했을 경우 허용할 때까지 요청 알람 띄울 것
     requestPermissions();
   }, []);
 

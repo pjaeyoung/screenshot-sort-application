@@ -21,6 +21,7 @@ const store = configureStore({
   reducer: folderSlice.reducer,
 });
 
+// TODO: 비동기 추가 - asyncStorage 에 저장/삭제
 export const useUserFolders = () => {
   const dispatch = useDispatch();
   const addUserFolder = (payload: FolderType) => {

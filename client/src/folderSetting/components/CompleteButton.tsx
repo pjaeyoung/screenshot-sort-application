@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { navigate } from '@/shared/utils/RootNavigation';
 
+// MAIN 화면 이동 버튼
 const CompleteButton: React.FC = () => {
   return (
     <Button onPress={onPress}>
