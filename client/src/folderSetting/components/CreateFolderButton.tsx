@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dimensions } from 'react-native';
 import styled from '@emotion/native';
 
-import { navigate } from '@/RootNavigation';
+import { navigate } from '@/shared/utils/RootNavigation';
 
 const CreateFolderButton: React.FC = () => {
   return (

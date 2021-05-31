@@ -5,11 +5,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Folder from '@/sort/components/Folder';
 import { folderLayoutData } from '@/main/constants/folderLayoutData';
-import { useFolderRedux } from '@/store';
+import { useUserFolders } from '@/redux/store';
 import MainFloatButton from './MainFloatButton';
 
 const MainScreen: React.FC<Object> = () => {
-  const { userFolders } = useFolderRedux();
+  const { userFolders } = useUserFolders();
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 40, backgroundColor: '#F7F7F7' }}>

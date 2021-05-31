@@ -3,7 +3,7 @@ import { addScreenshotListener } from 'react-native-detector';
 import * as RNFS from 'react-native-fs';
 
 import { openApp } from 'rn-openapp';
-import { navigate } from '@/RootNavigation';
+import { navigate } from './RootNavigation';
 
 const packageId = 'com.sccap.sccap';
 

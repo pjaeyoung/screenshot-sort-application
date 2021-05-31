@@ -1,8 +1,3 @@
-import {
-  FolderType,
-  FolderDisplayType,
-  IconFolderDisplayType,
-  RemovableFolderDisplayType,
-} from './Folder';
+import { FolderType, FolderDisplayType, RemovableFolderDisplayType } from './Folder';
 
-export type { FolderType, FolderDisplayType, IconFolderDisplayType, RemovableFolderDisplayType };
+export type { FolderType, FolderDisplayType, RemovableFolderDisplayType };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from '@emotion/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { navigate } from '@/RootNavigation';
+import { navigate } from '@/shared/utils/RootNavigation';
 
 const CompleteButton: React.FC = () => {
   return (

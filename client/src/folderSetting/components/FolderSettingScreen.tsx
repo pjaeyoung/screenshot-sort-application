@@ -11,10 +11,10 @@ import userFolderLayoutData from '@/folderSetting/constants/folderLayoutData';
 import { View, Text, Alert } from 'react-native';
 import Folder from '@/sort/components/Folder';
 
-import { useFolderRedux } from '@/store';
+import { useUserFolders } from '@/redux/store';
 
 const FolderSettingScreen: React.FC<void> = () => {
-  const { userFolders, removeUserFolder } = useFolderRedux();
+  const { userFolders, removeUserFolder } = useUserFolders();
 
   const onPressRemoveButtonCallbback = (id: string) => {
     removeUserFolder(id);
