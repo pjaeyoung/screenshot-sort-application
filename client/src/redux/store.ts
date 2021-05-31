@@ -21,7 +21,7 @@ const store = configureStore({
   reducer: folderSlice.reducer,
 });
 
-export const useFolderRedux = () => {
+export const useUserFolders = () => {
   const dispatch = useDispatch();
   const addUserFolder = (payload: FolderType) => {
     dispatch(increment(payload));

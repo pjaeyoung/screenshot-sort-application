@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
-import { navigate } from '@/RootNavigation';
+import { navigate } from '@/shared/utils/RootNavigation';
 
 const actions = [
   {

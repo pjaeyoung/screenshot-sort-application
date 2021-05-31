@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TextInput, GestureResponderHandlers } from 'react-native';
 import styled from '@emotion/native';
-import { navigate } from '@/RootNavigation';
-import { useFolderRedux } from '@/store';
+import { navigate } from '@/shared/utils/RootNavigation';
+import { useUserFolders } from '@/redux/store';
 
 interface FolderInputProps {
   panHandlers: GestureResponderHandlers;
@@ -22,7 +22,7 @@ const FolderInput: React.FC<FolderInputProps> = ({
     inputRef.current?.blur();
     inputRef.current?.focus();
   };
-  const { addUserFolder } = useFolderRedux();
+  const { addUserFolder } = useUserFolders();
 
   return (
     <Wrapper borderColor={borderColor} {...panHandlers} onTouchStart={openKeyboard}>

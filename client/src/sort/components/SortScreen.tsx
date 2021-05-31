@@ -12,17 +12,17 @@ import { defaultFolderData } from '@/shared/constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { userFolderLayoutData } from '@/sort/constants/folderLayoutData';
-import { FolderDisplayType, IconFolderDisplayType } from '@/shared/types';
+import { FolderDisplayType } from '@/shared/types';
 import iconFolderData from '../constants/iconFolderData';
 import { useRoute, RouteProp, ParamListBase } from '@react-navigation/core';
-import { useFolderRedux } from '@/store';
+import { useUserFolders } from '@/redux/store';
 
 interface SortScreenRouteProps extends RouteProp<ParamListBase, string> {
   params?: { screenshotPath: string };
 }
 
 const Sort: React.FC<Object> = () => {
-  const { userFolders } = useFolderRedux();
+  const { userFolders } = useUserFolders();
   const folders: FolderDisplayType[] = [
     ...userFolders.map((folder, index) => ({
       ...folder,
@@ -115,7 +115,7 @@ const changeScreenshotPath = async ({
   }
 };
 
-const intersectOnDragging = dropzone => {
+const intersectOnDragging = (dropzone: Collision.Dropzone) => {
   // TODO: 폴더 이미지 크기 애니메이션 추가
 
   console.log('drag');
