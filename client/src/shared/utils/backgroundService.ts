@@ -22,7 +22,14 @@ const userDidScreenshot = (): void => {
     })
     .then(async result => {
       const lastIndex = result.length - 1;
-      navigate('Sort', { screenshotPath: `file://${result[lastIndex].path}` });
+      // base64 만 허용하는 react-native-share 기능을 사용하기 위한 작업
+      return Promise.all([
+        Promise.resolve(result[lastIndex].path),
+        RNFS.readFile(`file://${result[lastIndex].path}`, 'base64'),
+      ]);
+    })
+    .then(([screenshotPath, screenshotBase64]) => {
+      navigate('Sort', { screenshotPath, screenshotBase64 });
     })
     .catch(e => console.warn(e));
 };

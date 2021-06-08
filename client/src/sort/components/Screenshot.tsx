@@ -1,51 +1,38 @@
 import * as React from 'react';
-import { GestureResponderEvent, PanResponderGestureState } from 'react-native';
-import Draggable from 'react-native-draggable';
+import { DraxView } from 'react-native-drax';
 import styled from '@emotion/native';
+import { Dimensions } from 'react-native';
 
 interface ScreenshotProps {
-  onDrag: (event: GestureResponderEvent, gestureState: PanResponderGestureState) => void;
-  onDragRelease: (event: GestureResponderEvent) => void;
-  filePath: string;
+  screenshotPath: string;
 }
 
 // TODO: 드롭 실패시에만 reverse하도록 변경
-const Screenshot: React.FC<ScreenshotProps> = ({ onDrag, onDragRelease, filePath }) => {
+const Screenshot: React.FC<ScreenshotProps> = ({ screenshotPath }) => {
   return (
-    <Wrapper>
-      <Draggable onDrag={onDrag} onDragRelease={onDragRelease}>
-        <ScreenshotContainer>
-          <ScreenshotImage source={{ uri: filePath }} />
-        </ScreenshotContainer>
-      </Draggable>
-    </Wrapper>
+    <ScreenshotContainer
+      draggingStyle={{ opacity: 0 }}
+      dragReleasedStyle={{ opacity: 0 }}
+      payload={screenshotPath}>
+      <ScreenshotImage
+        source={{ uri: `file://${screenshotPath}` }}
+        style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+      />
+    </ScreenshotContainer>
   );
 };
 
 export default Screenshot;
 
-// TODO: 다양한 기기에 대응할 수 있도록 크기 조정을 Dimensions 로 적용할 것
-const Wrapper = styled.View({
-  width: '100%',
-  height: 150,
+const ScreenshotContainer = styled(DraxView)({
   position: 'absolute',
-  left: '40%',
-  bottom: '15%',
-});
-
-const ScreenshotContainer = styled.View({
+  left: Dimensions.get('screen').width * 0.4,
+  bottom: Dimensions.get('screen').height * 0.2,
   width: 100,
   height: 150,
   paddingTop: 5,
   paddingBottom: 5,
-  backgroundColor: '#ffffff',
-  shadowColor: '#000',
-  shadowOffset: {
-    width: 0,
-    height: 2,
-  },
-  shadowOpacity: 0.25,
-  shadowRadius: 3.84,
+  backgroundColor: '#fff',
   elevation: 5,
 });
 
