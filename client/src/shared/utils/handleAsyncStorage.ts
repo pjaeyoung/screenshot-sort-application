@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FolderType } from '../types';
 
 function storeDataCurry<T>(key: string) {
   return async function storeData(value: T) {
@@ -24,11 +23,3 @@ function getDataCurry<T>(key: string) {
     }
   };
 }
-
-// TODO: 리덕스와 연결시키기
-const storage = {
-  storeFolders: storeDataCurry<FolderType[]>('folders'),
-  getFolders: getDataCurry<FolderType[]>('folders'),
-};
-
-export default storage;

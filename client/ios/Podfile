@@ -14,6 +14,8 @@ target 'ScCap' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'RNShare', :path => '../node_modules/react-native-share'
+
   target 'ScCapTests' do
     inherit! :complete
     # Pods for testing

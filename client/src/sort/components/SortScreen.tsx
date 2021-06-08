@@ -1,129 +1,117 @@
 import * as React from 'react';
-import { View, Text, BackHandler, ImageBackground } from 'react-native';
-
-import Screenshot from '@/sort/components/Screenshot';
-
-import * as Collision from '@/sort/utils/collision';
-import Dropzone from '@/sort/components/Dropzone';
-
-import Folder from '@/sort/components/Folder';
-import { defaultFolderData } from '@/shared/constants';
-
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-import { userFolderLayoutData } from '@/sort/constants/folderLayoutData';
-import { FolderDisplayType } from '@/shared/types';
-import iconFolderData from '../constants/iconFolderData';
+import { ImageBackground } from 'react-native';
+import styled from '@emotion/native';
 import { useRoute, RouteProp, ParamListBase } from '@react-navigation/core';
+import BasicFolderSvg from './BasicFolderSvg';
+import TrashFolderSvg from './TrashFolderSvg';
+import ShareFolderSvg from './ShareFolderSvg';
+import Screenshot from './Screenshot';
+import FolderSvgs from './FolderSvgs';
+import { userFolderLayoutData } from '../constants/folderLayoutData';
+import { DraxProvider } from 'react-native-drax';
 import { useUserFolders } from '@/redux/store';
-
+import Share from 'react-native-share';
 interface SortScreenRouteProps extends RouteProp<ParamListBase, string> {
-  params?: { screenshotPath: string };
+  params?: { screenshotPath: string; screenshotBase64: string };
 }
 
-const Sort: React.FC<Object> = () => {
-  const { userFolders } = useUserFolders();
-  // 유저가 생성한 폴더 이미지들과 기본 폴더, 아이콘폴더(공유/휴지통) 합치는 과정
-  // userFolders는 layoutData의 순서대로 위치가 배치된다
-  const folders: FolderDisplayType[] = [
-    ...userFolders.map((folder, index) => ({
-      ...folder,
-      ...userFolderLayoutData[index],
-      component: 'text',
-    })),
-    defaultFolderData,
-    ...iconFolderData,
-  ];
+const userFolders = [
+  {
+    id: 1,
+    name: '좋은 글귀',
+    borderColor: 'red',
+  },
+  {
+    id: 2,
+    name: '코디',
+    borderColor: 'green',
+  },
+  {
+    id: 3,
+    name: '재미있는 거',
+    borderColor: 'yellow',
+  },
+  {
+    id: 4,
+    name: '맛집',
+    borderColor: 'blue',
+  },
+  {
+    id: 5,
+    name: '생활 팁',
+    borderColor: 'pink',
+  },
+  {
+    id: 6,
+    name: '가볼 곳',
+    borderColor: 'orange',
+  },
+  {
+    id: 7,
+    name: 'wish list',
+    borderColor: 'brown',
+  },
+];
 
+const Sort: React.FC<Object> = () => {
   // 스크린샷 감지 서비스로부터 스크린샷 이미지 path 정보를 받아온다
   const route = useRoute<SortScreenRouteProps>();
-  const screenshotPath = route.params?.screenshotPath || 'file://';
+  const screenshotPath = route.params?.screenshotPath || '';
+  const screenhsotBase64 = route.params?.screenshotBase64 || '';
 
-  // 폴더이미지들을 충돌(겹침) 체크 가능한 dropzones로 지정
-  const [dropzones, setDropzones] = React.useState<Collision.Dropzone[]>([]);
-  const addDropzones = (dropzone: Collision.Dropzone) => {
-    setDropzones(prev => [...prev, dropzone]);
-  };
-
-  // 드래그 중 충돌(겹침) 이벤트 등록
-  const onDrag = Collision.onIntersectDropzones({
-    dropzones,
-    cb: intersectOnDragging,
-  });
-
-  // 드롭 성공 시 실행할 이벤트
-  const intersectOnDropped = (dropzone: Collision.Dropzone) => {
-    changeScreenshotPath({
-      originPath: screenshotPath,
-      destinationFolderName: dropzone.path,
-      cb: () => {
-        BackHandler.exitApp();
-      },
-    });
-  };
-
-  // 드롭 시 충돌(겹침) 이벤트 등록
-  const onDragRelease = Collision.onIntersectDropzones({
-    dropzones,
-    cb: intersectOnDropped,
-  });
+  // const { userFolders } = useUserFolders();
 
   return (
-    <View
-      style={{
-        flex: 1,
-      }}>
-      <ImageBackground
-        style={{ flex: 1 }}
-        imageStyle={{ opacity: 0.2 }}
-        source={{ uri: screenshotPath }}>
-        {folders.map(folder => {
+    <ImageBackground
+      style={{ flex: 1 }}
+      imageStyle={{ opacity: 0.2 }}
+      source={{ uri: `file://${screenshotPath}` }}>
+      <Wrapper>
+        {userFolders.map(({ id, name, borderColor }, index) => {
+          const FolderSvg = FolderSvgs[index];
           return (
-            <Dropzone id={folder.id} path={folder.name} addDropzones={addDropzones} key={folder.id}>
-              <Folder
-                borderColor={folder.borderColor}
-                borderDashed={folder.borderDashed}
-                positions={folder.positions}
-                height={folder.height}
-                width={folder.width}>
-                {folder.component === 'text' ? (
-                  <Text>{folder.name}</Text>
-                ) : (
-                  <Icon name={folder.name} size={24} color="black" />
-                )}
-              </Folder>
-            </Dropzone>
+            <FolderSvg
+              key={id}
+              style={userFolderLayoutData[index]}
+              borderColor={borderColor}
+              onDrop={() => console.log(name)}>
+              <FolderName>{name}</FolderName>
+            </FolderSvg>
           );
         })}
-        <Screenshot onDrag={onDrag} onDragRelease={onDragRelease} filePath={screenshotPath} />
-      </ImageBackground>
-    </View>
+        <BasicFolderSvg style={{ bottom: 50, left: -10 }} onDrop={() => console.log('기본')} />
+        <TrashFolderSvg
+          style={{ bottom: -20, right: -60 }}
+          onDrop={() => console.log('원본 이미지 삭제')}
+        />
+        <ShareFolderSvg
+          style={{ bottom: -60, left: '50%', transform: [{ translateX: -60 }] }}
+          onDrop={() => {
+            Share.open({ title: '', url: `data:image/png;base64,${screenhsotBase64}` })
+              .then(res => {
+                console.log(res);
+              })
+              .catch(err => {
+                err && console.log(err);
+              });
+          }}
+        />
+        <Screenshot screenshotPath={screenshotPath} />
+      </Wrapper>
+    </ImageBackground>
   );
 };
 
 export default Sort;
 
-const changeScreenshotPath = async ({
-  originPath,
-  destinationFolderName,
-  cb,
-}: {
-  originPath: string;
-  destinationFolderName: string;
-  cb: () => void;
-}) => {
-  try {
-    // TODO: 스크린샷 파일을 해당 폴더에 사본 생성
-    console.log(destinationFolderName);
-    cb();
-  } catch (error) {
-    // TODO: 폴더 경로 변경 실패 alarm
-    console.warn(error);
-  }
-};
+const Wrapper = styled(DraxProvider)({
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+});
 
-const intersectOnDragging = (dropzone: Collision.Dropzone) => {
-  // TODO: 폴더 이미지 크기 애니메이션 추가
-
-  console.log('drag');
-};
+const FolderName = styled.Text({
+  flex: 1,
+  fontSize: 15,
+  position: 'absolute',
+});

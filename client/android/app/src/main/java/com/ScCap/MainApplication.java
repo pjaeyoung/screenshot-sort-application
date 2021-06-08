@@ -1,5 +1,8 @@
 package com.sccap.sccap;
 
+import cl.json.RNSharePackage;
+import cl.json.ShareApplication;
+
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -14,6 +17,9 @@ import java.util.List;
 // react-native-fs 모듈 사용 
 import com.rnfs.RNFSPackage; 
 
+// react-native-reanimated 모듈 사용
+import com.facebook.react.bridge.JSIModulePackage; 
+import com.swmansion.reanimated.ReanimatedJSIModulePackage; 
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -32,6 +38,11 @@ public class MainApplication extends Application implements ReactApplication {
           // packages.add(new MyReactNativePackage());
           return packages;
         }
+
+      @Override
+      protected JSIModulePackage getJSIModulePackage() {
+        return new ReanimatedJSIModulePackage(); 
+      }
 
         @Override
         protected String getJSMainModuleName() {
