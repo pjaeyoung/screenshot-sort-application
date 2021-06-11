@@ -1,3 +1,4 @@
+import { string } from 'prop-types';
 import * as RNFS from 'react-native-fs';
 
 const FILEPATH = `${RNFS.ExternalStorageDirectoryPath}/SCCAP`;
@@ -12,12 +13,28 @@ const handleAsync = async <T>({
   asyncFunction: () => Promise<T>;
 }) => {
   try {
-    await asyncFunction();
-    onSuccess && onSuccess();
+    const res = await asyncFunction();
+    onSuccess && onSuccess(res);
   } catch (error) {
     onFailure && onFailure();
     console.error(error);
   }
+};
+
+export const readFolderAsync = ({
+  folderName,
+  onSuccess,
+  onFailure,
+}: {
+  folderName: string;
+  onSuccess?: Function;
+  onFailure?: Function;
+}) => {
+  handleAsync<RNFS.ReadDirItem[]>({
+    onSuccess,
+    onFailure,
+    asyncFunction: () => RNFS.readDir(`${FILEPATH}/${folderName}`),
+  });
 };
 
 export const createFolderAsync = ({
@@ -45,7 +62,7 @@ export const deleteFolderAsync = ({
   onSuccess?: Function;
   onFailure?: Function;
 }) => {
-  handleAsync({
+  handleAsync<void>({
     onSuccess,
     onFailure,
     asyncFunction: () => RNFS.unlink(`${FILEPATH}/${folderName}`),
@@ -63,7 +80,7 @@ export const renameFolderAsync = ({
   onSuccess?: Function;
   onFailure?: Function;
 }) => {
-  handleAsync({
+  handleAsync<void>({
     onSuccess,
     onFailure,
     asyncFunction: async () => {
@@ -91,7 +108,7 @@ export const deleteFileAsync = ({
   onSuccess?: Function;
   onFailure?: Function;
 }) => {
-  handleAsync({ onSuccess, onFailure, asyncFunction: () => RNFS.unlink(filePath) });
+  handleAsync<void>({ onSuccess, onFailure, asyncFunction: () => RNFS.unlink(filePath) });
 };
 
 const extractFileNameFrom = (path: string) => {
@@ -109,7 +126,7 @@ export const copyFileAsync = ({
   onSuccess?: Function;
   onFailure?: Function;
 }) => {
-  handleAsync({
+  handleAsync<void>({
     onSuccess,
     onFailure,
     asyncFunction: () =>
