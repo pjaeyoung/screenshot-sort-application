@@ -1,65 +1,51 @@
 import * as React from 'react';
-import { ImageBackground } from 'react-native';
+import { ImageBackground, ToastAndroid, BackHandler } from 'react-native';
 import styled from '@emotion/native';
 import { useRoute, RouteProp, ParamListBase } from '@react-navigation/core';
+
+import { DraxProvider } from 'react-native-drax';
 import BasicFolderSvg from './BasicFolderSvg';
 import TrashFolderSvg from './TrashFolderSvg';
 import ShareFolderSvg from './ShareFolderSvg';
 import Screenshot from './Screenshot';
+
 import FolderSvgs from './FolderSvgs';
-import { userFolderLayoutData } from '../constants/folderLayoutData';
-import { DraxProvider } from 'react-native-drax';
+import { userFolderLayoutData_SF } from '@/shared/constants';
 import { useUserFolders } from '@/redux/store';
+
 import Share from 'react-native-share';
+import * as FS from '@/shared/utils/fsFunctions';
 interface SortScreenRouteProps extends RouteProp<ParamListBase, string> {
   params?: { screenshotPath: string; screenshotBase64: string };
 }
 
-const userFolders = [
-  {
-    id: 1,
-    name: '좋은 글귀',
-    borderColor: 'red',
-  },
-  {
-    id: 2,
-    name: '코디',
-    borderColor: 'green',
-  },
-  {
-    id: 3,
-    name: '재미있는 거',
-    borderColor: 'yellow',
-  },
-  {
-    id: 4,
-    name: '맛집',
-    borderColor: 'blue',
-  },
-  {
-    id: 5,
-    name: '생활 팁',
-    borderColor: 'pink',
-  },
-  {
-    id: 6,
-    name: '가볼 곳',
-    borderColor: 'orange',
-  },
-  {
-    id: 7,
-    name: 'wish list',
-    borderColor: 'brown',
-  },
-];
-
 const Sort: React.FC<Object> = () => {
   // 스크린샷 감지 서비스로부터 스크린샷 이미지 path 정보를 받아온다
   const route = useRoute<SortScreenRouteProps>();
-  const screenshotPath = route.params?.screenshotPath || '';
-  const screenhsotBase64 = route.params?.screenshotBase64 || '';
+  const screenshotPath = route.params?.screenshotPath || ''; // fs 사용시 filePath 형식 요구
+  const screenhsotBase64 = route.params?.screenshotBase64 || ''; // Share 사용 시 base64 형식 요구
 
-  // const { userFolders } = useUserFolders();
+  // redux store에서 유저폴더 정보를 가져와 렌더링한다.
+  const { userFolders } = useUserFolders();
+  const UserFolders = userFolders.map(({ id, name, borderColor }, index) => {
+    const FolderSvg = FolderSvgs[index];
+    return (
+      <FolderSvg
+        key={id}
+        style={userFolderLayoutData_SF[index]}
+        borderColor={borderColor}
+        onDrop={() =>
+          FS.copyFileAsync({
+            originPath: screenshotPath,
+            destFolderName: name,
+            onSuccess: exitApp,
+            onFailure: showSortErrorToast,
+          })
+        }>
+        <FolderName>{name}</FolderName>
+      </FolderSvg>
+    );
+  });
 
   return (
     <ImageBackground
@@ -67,32 +53,27 @@ const Sort: React.FC<Object> = () => {
       imageStyle={{ opacity: 0.2 }}
       source={{ uri: `file://${screenshotPath}` }}>
       <Wrapper>
-        {userFolders.map(({ id, name, borderColor }, index) => {
-          const FolderSvg = FolderSvgs[index];
-          return (
-            <FolderSvg
-              key={id}
-              style={userFolderLayoutData[index]}
-              borderColor={borderColor}
-              onDrop={() => console.log(name)}>
-              <FolderName>{name}</FolderName>
-            </FolderSvg>
-          );
-        })}
-        <BasicFolderSvg style={{ bottom: 50, left: -10 }} onDrop={() => console.log('기본')} />
-        <TrashFolderSvg
-          style={{ bottom: -20, right: -60 }}
-          onDrop={() => console.log('원본 이미지 삭제')}
+        {UserFolders}
+        <BasicFolder onDrop={exitApp} />
+        <TrashFolder
+          onDrop={() =>
+            FS.deleteFileAsync({
+              filePath: screenshotPath,
+              onSuccess: exitApp,
+              onFailure: showSortErrorToast,
+            })
+          }
         />
-        <ShareFolderSvg
-          style={{ bottom: -60, left: '50%', transform: [{ translateX: -60 }] }}
+        <ShareFolder
           onDrop={() => {
             Share.open({ title: '', url: `data:image/png;base64,${screenhsotBase64}` })
-              .then(res => {
-                console.log(res);
+              .then(() => {
+                FS.deleteFileAsync({ filePath: screenshotPath });
+                exitApp();
               })
-              .catch(err => {
-                err && console.log(err);
+              .catch(error => {
+                if (error.message === SortError.cancelShare) return;
+                error && console.error(error);
               });
           }}
         />
@@ -104,6 +85,20 @@ const Sort: React.FC<Object> = () => {
 
 export default Sort;
 
+const SortError = {
+  cancelShare: 'User did not share',
+};
+
+// 앱 종료
+const exitApp = () => {
+  BackHandler.exitApp();
+};
+
+// 분류 실패 알람
+const showSortErrorToast = () => {
+  ToastAndroid.show('분류 실패', ToastAndroid.LONG);
+};
+
 const Wrapper = styled(DraxProvider)({
   flex: 1,
   justifyContent: 'center',
@@ -114,4 +109,20 @@ const FolderName = styled.Text({
   flex: 1,
   fontSize: 15,
   position: 'absolute',
+});
+
+const ShareFolder = styled(ShareFolderSvg)({
+  bottom: -60,
+  left: '50%',
+  transform: [{ translateX: -60 }],
+});
+
+const TrashFolder = styled(TrashFolderSvg)({
+  bottom: -20,
+  right: -60,
+});
+
+const BasicFolder = styled(BasicFolderSvg)({
+  bottom: 50,
+  left: -10,
 });

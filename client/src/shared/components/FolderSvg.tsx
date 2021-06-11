@@ -14,7 +14,11 @@ const FolderSvg: React.FC<IFolderSvgProps> = ({
   children,
 }) => {
   return (
-    <View style={[style, { justifyContent: 'center', alignItems: 'center' }]}>
+    <View
+      style={[
+        style,
+        { justifyContent: 'center', alignItems: 'center', transform: [{ scale: 1.1 }] },
+      ]}>
       <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} fill="none">
         <Path d={bg_d} fill="white" />
         <Path

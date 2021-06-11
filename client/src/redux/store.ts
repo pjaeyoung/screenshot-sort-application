@@ -1,16 +1,21 @@
 import { configureStore, createSlice, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
-import { FolderType } from '@/shared/types';
 import { useDispatch, useSelector } from 'react-redux';
 
-const folderSlice = createSlice<FolderType[], SliceCaseReducers<FolderType[]>, 'folders'>({
+interface IStoredFolder {
+  id: string;
+  name: string;
+  borderColor: string;
+}
+
+const folderSlice = createSlice<IStoredFolder[], SliceCaseReducers<IStoredFolder[]>, 'folders'>({
   name: 'folders',
   initialState: [],
   reducers: {
-    increment: (state: FolderType[], action: PayloadAction<FolderType>) => [
+    increment: (state: IStoredFolder[], action: PayloadAction<IStoredFolder>) => [
       ...state,
       action.payload,
     ],
-    decrement: (state: FolderType[], action: PayloadAction<{ id: string }>) =>
+    decrement: (state: IStoredFolder[], action: PayloadAction<{ id: string }>) =>
       state.filter(prevFolder => prevFolder.id !== action.payload.id),
   },
 });
@@ -24,14 +29,14 @@ const store = configureStore({
 // TODO: 비동기 추가 - asyncStorage 에 저장/삭제
 export const useUserFolders = () => {
   const dispatch = useDispatch();
-  const addUserFolder = (payload: FolderType) => {
+  const addUserFolder = (payload: IStoredFolder) => {
     dispatch(increment(payload));
   };
   const removeUserFolder = (id: string) => {
     dispatch(decrement({ id }));
   };
 
-  const userFolders = useSelector((state: FolderType[]) => state);
+  const userFolders = useSelector((state: IStoredFolder[]) => state);
 
   return { userFolders, addUserFolder, removeUserFolder };
 };
