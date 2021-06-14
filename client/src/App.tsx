@@ -17,6 +17,7 @@ import { navigationRef } from '@/shared/utils/RootNavigation';
 
 import { MainScreen } from '@/main/components';
 import { SortScreen } from '@/sort/components';
+import { FolderScreen } from '@/folder/components';
 import { Provider } from 'react-redux';
 import store from '@/redux/store';
 
@@ -36,6 +37,7 @@ const App: React.FC<void> = () => {
             headerShown: false,
           }}>
           <Stack.Screen name="Main" component={MainScreen} />
+          <Stack.Screen name="Folder" component={FolderScreen} />
           <Stack.Screen name="Sort" component={SortScreen} />
         </Stack.Navigator>
       </NavigationContainer>

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 interface IStoredFolder {
   id: string;
-  name: string;
+  folderName: string;
   borderColor: string;
 }
 
