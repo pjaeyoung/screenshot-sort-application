@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, StyleProp, ViewStyle } from 'react-native';
 import FolderSvg from './FolderSvg';
 import { IFolderSvgProps } from '@/shared/types';
 import { defaultBorderColors } from '@/shared/constants';
@@ -16,8 +16,12 @@ export const basicFolderData: IFolderSvgProps = {
   borderColor: defaultBorderColors[8],
 };
 
-const BasicFolderSvg: React.FC<void> = () => (
-  <FolderSvg {...basicFolderData} borderDashed>
+interface IBasicFolderSvgProps {
+  style?: StyleProp<ViewStyle>;
+}
+
+const BasicFolderSvg: React.FC<IBasicFolderSvgProps> = ({ style }) => (
+  <FolderSvg {...basicFolderData} style={style} borderDashed>
     <Text
       style={{
         flex: 1,

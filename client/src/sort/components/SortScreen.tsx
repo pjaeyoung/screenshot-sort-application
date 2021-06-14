@@ -27,7 +27,7 @@ const Sort: React.FC<Object> = () => {
 
   // redux store에서 유저폴더 정보를 가져와 렌더링한다.
   const { userFolders } = useUserFolders();
-  const UserFolders = userFolders.map(({ id, name, borderColor }, index) => {
+  const UserFolders = userFolders.map(({ id, folderName, borderColor }, index) => {
     const FolderSvg = FolderSvgs[index];
     return (
       <FolderSvg
@@ -37,12 +37,12 @@ const Sort: React.FC<Object> = () => {
         onDrop={() =>
           FS.copyFileAsync({
             originPath: screenshotPath,
-            destFolderName: name,
+            destFolderName: folderName,
             onSuccess: exitApp,
             onFailure: showSortErrorToast,
           })
         }>
-        <FolderName>{name}</FolderName>
+        <FolderName>{folderName}</FolderName>
       </FolderSvg>
     );
   });
