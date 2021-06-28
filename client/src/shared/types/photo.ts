@@ -2,7 +2,7 @@ export interface IPhoto {
   id: number;
   folderId: number;
   photoName: string;
-  source: string;
+  source?: string;
 }
 
 export interface IPhotoEntities {
@@ -13,12 +13,20 @@ export interface IPhotosState {
   folderId: number | null;
   ids: number[] | null;
   entities: IPhotoEntities | null;
+  error: string | null | undefined;
+}
+
+export interface IIdsByFolderId {
+  [folderId: number]: number[];
 }
 
 export interface IPhotosInStorage {
-  ids: number[] | null;
-  entitiesByFolderId: {
-    [folderId: number]: number[] | null;
-  };
+  idsByFolderId: IIdsByFolderId | null;
   entities: IPhotoEntities | null;
+}
+
+export interface IPhotoPayloadCreator {
+  folderId: number | null;
+  ids: number[] | null;
+  entities: IPhotoEntities;
 }

@@ -99,6 +99,56 @@ export const renameFolderAsync = ({
   });
 };
 
+export const createFileAsync = ({
+  path,
+  contents,
+  encoding = 'base64',
+  onSuccess,
+  onFailure,
+}: {
+  path: string;
+  contents: any;
+  encoding?: string;
+  onSuccess?: Function;
+  onFailure?: Function;
+}) => {
+  handleAsync<void>({
+    onSuccess,
+    onFailure,
+    asyncFunction: async () => {
+      await RNFS.writeFile(`${FILEPATH}/${path}`, contents, encoding);
+    },
+  });
+};
+
+export const readFileAsync = ({
+  filePath,
+  encoding = 'base64',
+  onSuccess,
+  onFailure,
+}: {
+  filePath: string;
+  encoding?: string;
+  onSuccess?: Function;
+  onFailure?: Function;
+}) => {
+  handleAsync<string>({
+    onSuccess,
+    onFailure,
+    asyncFunction: () => RNFS.readFile(`${FILEPATH}/${filePath}`, encoding),
+  });
+};
+
+export const readFile = ({
+  filePath,
+  encoding = 'base64',
+}: {
+  filePath: string;
+  encoding?: string;
+}) => {
+  return RNFS.readFile(`${FILEPATH}/${filePath}`, encoding);
+};
+
 export const deleteFileAsync = ({
   filePath,
   onSuccess,
@@ -108,7 +158,11 @@ export const deleteFileAsync = ({
   onSuccess?: Function;
   onFailure?: Function;
 }) => {
-  handleAsync<void>({ onSuccess, onFailure, asyncFunction: () => RNFS.unlink(filePath) });
+  handleAsync<void>({
+    onSuccess,
+    onFailure,
+    asyncFunction: () => RNFS.unlink(`${FILEPATH}/${filePath}`),
+  });
 };
 
 const extractFileNameFrom = (path: string) => {

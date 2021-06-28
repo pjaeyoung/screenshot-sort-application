@@ -44,7 +44,6 @@ export const useUserFolders = () => {
   };
 
   const userFolders = useAppSelector(state => state.folders);
-
   const getUserAllFolders = () => userFolders;
   const getUserFolderById = (id: number) => userFolders.find(folder => folder.id == id);
 

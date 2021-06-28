@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function storeDataCurry<T>(key: string) {
+export function storeDataCurry<T>(key: string) {
   return async function storeData(value: T) {
     try {
       const jsonValue = JSON.stringify(value);
@@ -12,7 +12,7 @@ function storeDataCurry<T>(key: string) {
   };
 }
 
-function getDataCurry<T>(key: string) {
+export function getDataCurry<T>(key: string) {
   return async function getData(): Promise<T | null | undefined> {
     try {
       const jsonValue = await AsyncStorage.getItem(key);

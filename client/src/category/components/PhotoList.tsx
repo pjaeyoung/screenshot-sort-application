@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { View, FlatList, ListRenderItem, StyleSheet } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 
 import PhotoItem from './PhotoItem';
 import { IPhoto } from '@/shared/types';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppDispatch } from '@/redux/hooks';
+import { ErrorView } from '@/shared/components';
 import { useUserFolders } from '@/redux/folderSlice';
-import { loadPhotosInFolder, usePhotosInFolder } from '@/redux/photosSlice';
-import { parseToPhotosInFolder } from '@/shared/utils/parser';
+import { getPhotosInStorage, usePhotosInFolder } from '@/redux/photosSlice';
 
 const PhotoList: React.FC = () => {
   const navigation = useNavigation();
@@ -15,47 +15,45 @@ const PhotoList: React.FC = () => {
   const { params } = useRoute();
   const { folderId } = params;
   const { getUserFolderById } = useUserFolders();
-  const { getAllPhotosInFolder } = usePhotosInFolder();
-  const photos = getAllPhotosInFolder();
+  const { getAllPhotosInFolder, getPhotosError } = usePhotosInFolder();
+  const { folderName } = getUserFolderById(folderId);
+  const photosData = getAllPhotosInFolder();
+  const error = getPhotosError();
 
   const renderItem: ListRenderItem<IPhoto> = ({ item }) => <PhotoItem {...item} />;
 
   useEffect(
     function setInitialScreenOptions() {
-      const folder = getUserFolderById(folderId);
-
-      if (!folder) return;
-
       navigation.setOptions({
-        title: folder.folderName,
+        title: folderName,
       });
     },
     [folderId],
   );
 
-  useEffect(
-    function loadPhotosData() {
-      //To do: thunk에서 처리
-      const { photos } = require('@/fakeData.json');
-      const { idsInFolder, entitiesInFolder } = parseToPhotosInFolder(folderId, photos);
-
-      dispatch(
-        loadPhotosInFolder({
-          folderId: folderId,
-          ids: idsInFolder,
-          entities: entitiesInFolder,
-        }),
-      );
-    },
-    [folderId],
+  useFocusEffect(
+    useCallback(
+      function loadPhotosData() {
+        if (folderId) {
+          dispatch(getPhotosInStorage(folderId));
+        }
+      },
+      [folderId],
+    ),
   );
+
+  if (error || !photosData) {
+    return <ErrorView message={error} />;
+  }
+
+  //console.log('photos data: ', photosData);
 
   return (
     <View style={styles.container}>
-      {photos && (
+      {photosData && (
         <FlatList
           style={styles.photos}
-          data={photos}
+          data={photosData}
           renderItem={renderItem}
           keyExtractor={item => (item as IPhoto).id.toString()}
           numColumns={3}
