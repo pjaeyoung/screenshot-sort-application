@@ -1,7 +1,7 @@
 // SORT/FOLDER 화면에 폴더 이미지 배치할 위치를 담은 데이터
 // Folder 컴포넌트의 composition하는 자식 컴포넌트로 Text 태그를 사용함
 
-export const userFolderLayoutData_SF = [
+export const userFolderLayoutData = [
   {
     left: -5,
     top: -5,

@@ -17,9 +17,12 @@ import { navigationRef } from '@/shared/utils/RootNavigation';
 
 import { MainScreen } from '@/main/components';
 import { SortScreen } from '@/sort/components';
+import CategoryScreen from '@/category';
+import PhotoScreen from '@/photo';
 import { FolderScreen } from '@/folder/components';
 import { Provider } from 'react-redux';
 import store from '@/redux/store';
+import { defaultOptionsWithHeader } from '@/shared/constants';
 
 const Stack = createStackNavigator();
 
@@ -39,6 +42,21 @@ const App: React.FC<void> = () => {
           <Stack.Screen name="Main" component={MainScreen} />
           <Stack.Screen name="Folder" component={FolderScreen} />
           <Stack.Screen name="Sort" component={SortScreen} />
+          <Stack.Screen
+            name="Category"
+            component={CategoryScreen}
+            options={{
+              headerShown: true,
+              ...defaultOptionsWithHeader,
+            }}
+          />
+          <Stack.Screen
+            name="Photo"
+            component={PhotoScreen}
+            options={{
+              ...defaultOptionsWithHeader,
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

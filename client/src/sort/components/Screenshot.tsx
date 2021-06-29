@@ -26,13 +26,12 @@ export default Screenshot;
 
 const ScreenshotContainer = styled(DraxView)({
   position: 'absolute',
-  left: Dimensions.get('screen').width * 0.4,
-  bottom: Dimensions.get('screen').height * 0.2,
-  width: 100,
+  left: Dimensions.get('screen').width * 0.33,
+  bottom: Dimensions.get('screen').height * 0.15,
+  width: 80,
   height: 150,
-  paddingTop: 5,
-  paddingBottom: 5,
   backgroundColor: '#fff',
+  borderRadius: 10,
   elevation: 5,
 });
 

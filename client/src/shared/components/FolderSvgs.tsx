@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { FolderSvg } from '@/shared/components';
-import { folderSvgsData } from '@/shared/constants';
-import { IFolderSvgProps } from '@/shared/types';
+import FolderSvg from './FolderSvg';
+import { folderSvgsData } from '../constants';
+import { IFolderSvgProps } from '../types';
 import { StyleProp, ViewStyle } from 'react-native';
 
 const FolderSvgCurry = (
