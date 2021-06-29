@@ -10,15 +10,9 @@ import {
 } from '@/shared/types';
 import { emptyInPhotoListError } from '@/shared/constants';
 import { useAppSelector } from '@/redux/hooks';
+import { RootState } from '@/redux/store';
 import { getDataCurry, storeDataCurry } from '@/shared/utils/handleAsyncStorage';
-import { createFileAsync, readFileAsync, readFile } from '@/shared/utils/fsFunctions';
-
-const getFolderNameInStoageById = async (folderId: number) => {
-  const folders = await getDataCurry('folders')();
-  const folderName = folders?.find(folder => folder.id == folderId)?.folderName;
-
-  return folderName;
-};
+import { createFileAsync, deleteFileAsync, readFile } from '@/shared/utils/fsFunctions';
 
 interface IFilePath {
   id: number;
@@ -83,7 +77,6 @@ export const getPhotosInStorage = createAsyncThunk<
       const entities =
         ids?.reduce((_entities: IPhotoEntities, id: number) => {
           const photo = photos.entities![id];
-          console.log('photo: ', photo);
           _entities[id] = photo;
           //const folderName = await getFolderNameInStoageById(photo.folderId);
           const folderName = `folder${photo.folderId}`;
@@ -96,8 +89,13 @@ export const getPhotosInStorage = createAsyncThunk<
       const sources = await Promise.all(
         filePaths.map(async filePath => {
           const { id, path } = filePath;
+          let source;
+          try {
+            source = await readFile({ filePath: path });
+          } catch (error) {
+            console.error(error.message);
+          }
 
-          const source = await readFile({ filePath: path });
           return {
             id,
             source,
@@ -122,10 +120,54 @@ export const getPhotosInStorage = createAsyncThunk<
   }
 });
 
-export const removePhotosInStorage = createAsyncThunk(
-  'photos/removePhotosInStorage',
-  async () => {},
-);
+export const removePhotoInStorage = createAsyncThunk<
+  void,
+  { folderName: string; photoId: number },
+  { state: RootState }
+>('photos/removePhotosInStorage', async ({ folderName, photoId }, { getState }) => {
+  try {
+    const photosSlice = getState().photos;
+
+    if (
+      !photosSlice.ids ||
+      photosSlice.ids.find(id => id === photoId) === undefined ||
+      !photosSlice.entities ||
+      !(photoId in photosSlice.entities)
+    ) {
+      throw Error('redux store에 해당 사진이 존재하지 않습니다.');
+    }
+
+    const { folderId, photoName } = photosSlice.entities[photoId];
+    //TO DO: 코드 병합 후 folderName은 redux store로부터 가져올 것
+    const photos = await getDataCurry<IPhotosInStorage>('photos')();
+
+    if (photos && photos.idsByFolderId && photos.entities) {
+      if (
+        photos.idsByFolderId[folderId].find(id => id === photoId) === undefined ||
+        !(photoId in photos.entities)
+      ) {
+        throw Error('해당 사진 데이터가 async storage에 저장되어 있지 않습니다.');
+      }
+
+      await deleteFileAsync({ filePath: `${folderName}/${photoName}` });
+      await storeDataCurry<IPhotosInStorage>('photos')({
+        idsByFolderId: {
+          ...photos.idsByFolderId,
+          [folderId]: photos.idsByFolderId[folderId].filter((id: number) => id !== photoId),
+        },
+        entities: photos.entities,
+      });
+
+      return {
+        photoId,
+      };
+    } else {
+      throw Error('async storage에 photos가 존재하지 않습니다.');
+    }
+  } catch (error) {
+    console.error(error.message);
+  }
+});
 
 const initialState = {
   folderId: null,
@@ -142,7 +184,8 @@ const photosSlice = createSlice({
     builder
       .addCase(getPhotosInStorage.pending, (state, action) => {
         return {
-          ...initialState,
+          ...state,
+          error: null,
         };
       })
       .addCase(getPhotosInStorage.fulfilled, (state, { payload }) => {
@@ -155,7 +198,7 @@ const photosSlice = createSlice({
         if (payload) {
           return {
             ...state,
-            error: payload.errorMessage,
+            error: payload?.errorMessage || error.message,
           };
         } else {
           return {
@@ -163,6 +206,24 @@ const photosSlice = createSlice({
             error: error.message,
           };
         }
+      })
+      .addCase(removePhotoInStorage.pending, (state, action) => {
+        return {
+          ...state,
+          error: null,
+        };
+      })
+      .addCase(removePhotoInStorage.fulfilled, (state, { payload }) => {
+        const { photoId } = payload;
+
+        state.ids = state.ids?.filter(id => id !== photoId) || null;
+        delete state.entities![photoId];
+      })
+      .addCase(removePhotoInStorage.rejected, (state, { error, payload }) => {
+        return {
+          ...state,
+          error: error.message,
+        };
       });
   },
 });

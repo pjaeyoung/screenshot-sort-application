@@ -1,14 +1,17 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { StyleSheet, View, ImageBackground, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, ImageBackground, TouchableWithoutFeedback, Alert } from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 import { TrashButton } from '@/shared/components';
-import { usePhotosInFolder } from '@/redux/photosSlice';
+import { useAppDispatch } from '@/redux/hooks';
+import { usePhotosInFolder, removePhotoInStorage } from '@/redux/photosSlice';
 import { useUserFolders } from '@/redux/folderSlice';
 
 const Photo: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
   const { id } = route.params; //redux store에 데이터 저장하고 가져오는 방식으로 교체할 예정
   const [isControlMode, setIsControlMode] = useState<boolean>(true);
   const { getUserFolderById } = useUserFolders();
@@ -18,6 +21,27 @@ const Photo: React.FC = () => {
 
   const onPressToggleControlMode = () => {
     setIsControlMode(!isControlMode);
+  };
+
+  const onPressTrashButton = async () => {
+    Alert.alert('사진 삭제', '사진을 정말 삭제하시겠습니까?', [
+      {
+        text: '취소',
+        style: 'cancel',
+      },
+      {
+        text: '확인',
+        onPress: async () => {
+          try {
+            const resultAction = await dispatch(removePhotoInStorage({ folderName, photoId: id }));
+            unwrapResult(resultAction);
+            navigation.goBack();
+          } catch (error) {
+            console.error(error.message);
+          }
+        },
+      },
+    ]);
   };
 
   useEffect(function setInitialScreenOptions() {
@@ -38,7 +62,9 @@ const Photo: React.FC = () => {
   return (
     <TouchableWithoutFeedback style={styles.container} onPress={onPressToggleControlMode}>
       <ImageBackground style={styles.Image} source={{ uri: `data:image/*;base64,${source}` }}>
-        <View style={styles.Bottom}>{isControlMode && <TrashButton />}</View>
+        <View style={styles.Bottom}>
+          {isControlMode && <TrashButton onPress={onPressTrashButton} />}
+        </View>
       </ImageBackground>
     </TouchableWithoutFeedback>
   );

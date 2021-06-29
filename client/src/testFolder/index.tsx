@@ -48,7 +48,6 @@ const TestFolder: React.FC = () => {
     await Promise.all(
       photos.map(async photo => {
         const filePath = `${photo.folderId === 1 ? 'folder1' : 'folder2'}/${photo.photoName}`;
-        console.log('path: ', filePath);
         try {
           await deleteFileAsync({ filePath });
         } catch (error) {
@@ -88,11 +87,6 @@ const TestFolder: React.FC = () => {
     const loadFoldersData = async () => {
       const { folders } = require('@/fakeData.json'); //실제로는 async storage에서 가져와야 함
 
-      const onSuccess = folderName => async () => {
-        const folder = await readFolderAsync({ folderName });
-        console.log('folder:', folder);
-      };
-
       const onFailure = async () => {
         console.error('failed');
       };
@@ -103,9 +97,7 @@ const TestFolder: React.FC = () => {
         folders?.map(folder => folderNames.push(folder.folderName));
 
         await Promise.all([
-          ...folderNames.map(folderName =>
-            createFolderAsync({ folderName, onSuccess: onSuccess(''), onFailure }),
-          ),
+          ...folderNames.map(folderName => createFolderAsync({ folderName, onFailure })),
           dispatch(loadAllFolders(folders)),
         ]);
       } catch (error) {
