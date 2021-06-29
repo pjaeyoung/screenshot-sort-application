@@ -1,62 +1,60 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
+import * as RNFS from 'react-native-fs';
 import {
   IPhoto,
   IPhotosState,
   IPhotosInStorage,
   IPhotoEntities,
-  IIdsByFolderId,
   IPhotoPayloadCreator,
 } from '@/shared/types';
 import { emptyInPhotoListError } from '@/shared/constants';
 import { useAppSelector } from '@/redux/hooks';
 import { RootState } from '@/redux/store';
 import { getDataCurry, storeDataCurry } from '@/shared/utils/handleAsyncStorage';
-import { createFileAsync, deleteFileAsync, readFile } from '@/shared/utils/fsFunctions';
+import { createFileAsync, deleteFileAsync, FILEPATH, readFile } from '@/shared/utils/fsFunctions';
+import { IStoredFolder } from './folderSlice';
 
 interface IFilePath {
   id: number;
   path: string;
 }
 
-export const storePhotoInStorage = createAsyncThunk<void, IPhoto>(
-  'photos/storePhotosInStorage',
-  async photoData => {
-    const { source, ...photo } = photoData;
-    //const folderName = await getFolderNameInStoageById(photo.folderId);
-    const folderName = `folder${photo.folderId}`;
-    const photos: IPhotosInStorage = (await getDataCurry<IPhotosInStorage>('photos')()) || {
-      idsByFolderId: null,
-      entities: null,
+export const storePhotoInStorage = createAsyncThunk<
+  void,
+  { photoData: IPhoto; folderName: string }
+>('photos/storePhotosInStorage', async ({ photoData: photo, folderName }) => {
+  const photos: IPhotosInStorage = (await getDataCurry<IPhotosInStorage>('photos')()) || {
+    idsByFolderId: null,
+    entities: null,
+  };
+  let { idsByFolderId, entities } = photos;
+
+  if (idsByFolderId && photo.folderId in idsByFolderId) {
+    const findedId = idsByFolderId[photo.folderId].find(id => id === photo.id);
+
+    if (!findedId) {
+      idsByFolderId[photo.folderId].push(photo.id);
+    }
+  } else {
+    idsByFolderId
+      ? (idsByFolderId[photo.folderId] = [photo.id])
+      : (idsByFolderId = { [photo.folderId]: [photo.id] });
+  }
+
+  if (entities) {
+    entities[photo.id] = photo;
+  } else {
+    entities = {
+      [photo.id]: photo,
     };
-    let { idsByFolderId, entities } = photos;
+  }
+  const source = await RNFS.readFile(`${FILEPATH}/${folderName}/${photo.photoName}`, 'base64');
 
-    if (idsByFolderId && photo.folderId in idsByFolderId) {
-      const findedId = idsByFolderId[photo.folderId].find(id => id == photo.id);
-
-      if (!findedId) {
-        idsByFolderId[photo.folderId].push(photo.id);
-      }
-    } else {
-      idsByFolderId
-        ? (idsByFolderId[photo.folderId] = [photo.id])
-        : (idsByFolderId = { [photo.folderId]: [photo.id] });
-    }
-
-    if (entities) {
-      entities[photo.id] = photo;
-    } else {
-      entities = {
-        [photo.id]: photo,
-      };
-    }
-
-    await Promise.all([
-      createFileAsync({ path: `${folderName}/${photo.photoName}`, contents: source }),
-      storeDataCurry<IPhotosInStorage>('photos')({ idsByFolderId, entities }),
-    ]);
-  },
-);
+  await Promise.all([
+    createFileAsync({ path: `${folderName}/${photo.photoName}`, contents: source }),
+    storeDataCurry<IPhotosInStorage>('photos')({ idsByFolderId, entities }),
+  ]);
+});
 
 export const getPhotosInStorage = createAsyncThunk<
   IPhotoPayloadCreator,
@@ -66,21 +64,23 @@ export const getPhotosInStorage = createAsyncThunk<
       errorMessage: string;
     };
   }
->('photos/getPhotosInStorage', async (folderId, { rejectWithValue }) => {
+>('photos/getPhotosInStorage', async (folderId, { rejectWithValue, getState }) => {
   try {
     const photos = await getDataCurry<IPhotosInStorage>('photos')();
-    //const ids = null;
-
     if (photos && photos.idsByFolderId && photos.entities) {
       const ids = photos.idsByFolderId[folderId];
+      if (!ids || ids.length === 0) {
+        return rejectWithValue(emptyInPhotoListError);
+      }
       const filePaths: IFilePath[] = [];
       const entities =
         ids?.reduce((_entities: IPhotoEntities, id: number) => {
           const photo = photos.entities![id];
           _entities[id] = photo;
-          //const folderName = await getFolderNameInStoageById(photo.folderId);
-          const folderName = `folder${photo.folderId}`;
-          const filePath = `${folderName}/${photo.photoName}`;
+          const folder = (getState().folders.entries as IStoredFolder[]).find(
+            ({ id }) => id === folderId,
+          );
+          const filePath = `${folder?.folderName}/${photo.photoName}`;
           filePaths.push({ id, path: filePath });
 
           return _entities;
@@ -138,7 +138,7 @@ export const removePhotoInStorage = createAsyncThunk<
     }
 
     const { folderId, photoName } = photosSlice.entities[photoId];
-    //TO DO: 코드 병합 후 folderName은 redux store로부터 가져올 것
+
     const photos = await getDataCurry<IPhotosInStorage>('photos')();
 
     if (photos && photos.idsByFolderId && photos.entities) {

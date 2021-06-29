@@ -42,11 +42,9 @@ const PhotoList: React.FC = () => {
     ),
   );
 
-  if (error || !photosData) {
+  if (error || photosData?.length === 0) {
     return <ErrorView message={error} />;
   }
-
-  //console.log('photos data: ', photosData);
 
   return (
     <View style={styles.container}>

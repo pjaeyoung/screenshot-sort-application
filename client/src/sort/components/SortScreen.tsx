@@ -10,21 +10,27 @@ import ShareFolderSvg from './ShareFolderSvg';
 import Screenshot from './Screenshot';
 
 import FolderSvgs from './FolderSvgs';
-import { userFolderLayoutData_SF } from '@/shared/constants';
+import { userFolderLayoutData } from '../constants';
 import { useUserFolders } from '@/redux/store';
 
 import Share from 'react-native-share';
+import { useNavigation } from '@react-navigation/native';
+
 import * as FS from '@/shared/utils/fsFunctions';
+import { useAppDispatch } from '@/redux/hooks';
+import { storePhotoInStorage } from '@/redux/photosSlice';
 interface SortScreenRouteProps extends RouteProp<ParamListBase, string> {
   params?: { screenshotPath: string; screenshotBase64: string };
 }
 
 const Sort: React.FC<Object> = () => {
   // 스크린샷 감지 서비스로부터 스크린샷 이미지 path 정보를 받아온다
+  const navigation = useNavigation();
   const route = useRoute<SortScreenRouteProps>();
   const screenshotPath = route.params?.screenshotPath || ''; // fs 사용시 filePath 형식 요구
   const screenhsotBase64 = route.params?.screenshotBase64 || ''; // Share 사용 시 base64 형식 요구
 
+  const dispatch = useAppDispatch();
   // redux store에서 유저폴더 정보를 가져와 렌더링한다.
   const { userFolders } = useUserFolders();
   const UserFolders = userFolders.map(({ id, folderName, borderColor }, index) => {
@@ -32,13 +38,24 @@ const Sort: React.FC<Object> = () => {
     return (
       <FolderSvg
         key={id}
-        style={userFolderLayoutData_SF[index]}
+        style={userFolderLayoutData[index]}
         borderColor={borderColor}
         onDrop={() =>
           FS.copyFileAsync({
             originPath: screenshotPath,
             destFolderName: folderName,
-            onSuccess: exitApp,
+            onSuccess: () => {
+              dispatch(
+                storePhotoInStorage({
+                  photoData: {
+                    id: Date.now(),
+                    photoName: FS.extractFileNameFrom(screenshotPath),
+                    folderId: id,
+                  },
+                  folderName,
+                }),
+              ).then(() => exitApp());
+            },
             onFailure: showSortErrorToast,
           })
         }>
@@ -68,8 +85,14 @@ const Sort: React.FC<Object> = () => {
           onDrop={() => {
             Share.open({ title: '', url: `data:image/png;base64,${screenhsotBase64}` })
               .then(() => {
-                FS.deleteFileAsync({ filePath: screenshotPath });
-                exitApp();
+                FS.deleteFileAsync({
+                  filePath: screenshotPath,
+                  onSuccess: () => {
+                    navigation.navigate('Main');
+                    exitApp();
+                  },
+                  onFailure: showSortErrorToast,
+                });
               })
               .catch(error => {
                 if (error.message === SortError.cancelShare) return;

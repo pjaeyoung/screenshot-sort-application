@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import styled from '@emotion/native';
 import Svg, { Path } from 'react-native-svg';
 import { IFolderSvgProps } from '@/shared/types';
 
@@ -14,11 +14,7 @@ const FolderSvg: React.FC<IFolderSvgProps> = ({
   children,
 }) => {
   return (
-    <View
-      style={[
-        style,
-        { justifyContent: 'center', alignItems: 'center', transform: [{ scale: 1.1 }] },
-      ]}>
+    <Wrapper style={style}>
       <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} fill="none">
         <Path d={bg_d} fill="white" />
         <Path
@@ -30,8 +26,14 @@ const FolderSvg: React.FC<IFolderSvgProps> = ({
         />
       </Svg>
       {children}
-    </View>
+    </Wrapper>
   );
 };
 
 export default FolderSvg;
+
+const Wrapper = styled.View({
+  justifyContent: 'center',
+  alignItems: 'center',
+  transform: [{ scale: 1.1 }],
+});

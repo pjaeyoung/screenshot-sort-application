@@ -4,34 +4,27 @@ import * as RNFS from 'react-native-fs';
 
 import { openApp } from 'rn-openapp';
 import { navigate } from './RootNavigation';
-
 const packageId = 'com.sccap.sccap';
 
+const pendingRegex = /pending/;
+
+// FIXME: openApp 작동 에러 - 앱이 foreground 상태가 아닐 경우 감지가 안 되는 현상
+
+const isPendingScreenshotPath = (path: string) => {
+  return pendingRegex.test(path);
+};
+
 // 스크린샷 감지 시 호출하는 콜백함수
-// 앱을 열고 스크린샷 폴더에 접근하여 가장 마지막 스크린샷 이미지 path를 가져와
-// SORT 화면 이동 시 props로 전달
-const userDidScreenshot = (): void => {
+const userDidScreenshot = (path: string): void => {
+  if (isPendingScreenshotPath(path)) return;
   openApp(packageId)
-    .then(isOpenedApp => {
-      if (isOpenedApp) {
-        // FIXME : 모든 안드로이드 기기에 대응할 수 있도록 파일 경로를 수정해야 합니다.
-        return RNFS.readDir(`${RNFS.ExternalStorageDirectoryPath}/DCIM/Screenshots`);
-      } else {
-        throw new Error('ScCap 앱 실행이 실패했습니다.');
-      }
-    })
-    .then(async result => {
-      const lastIndex = result.length - 1;
-      // base64 만 허용하는 react-native-share 기능을 사용하기 위한 작업
-      return Promise.all([
-        Promise.resolve(result[lastIndex].path),
-        RNFS.readFile(`file://${result[lastIndex].path}`, 'base64'),
-      ]);
+    .then(async () => {
+      return Promise.all([path, RNFS.readFile(path, 'base64')]);
     })
     .then(([screenshotPath, screenshotBase64]) => {
       navigate('Sort', { screenshotPath, screenshotBase64 });
     })
-    .catch(e => console.warn(e));
+    .catch(e => console.error(e));
 };
 
 // 스크린샷 감지 이벤트 등록
@@ -52,9 +45,6 @@ const options = {
     type: 'mipmap',
   },
   color: '#ff00ff',
-  parameters: {
-    delay: 1000,
-  },
 };
 
 // 스크린샷 감지 서비스 실행

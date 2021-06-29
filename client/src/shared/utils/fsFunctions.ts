@@ -1,7 +1,8 @@
-import { string } from 'prop-types';
 import * as RNFS from 'react-native-fs';
 
-const FILEPATH = `${RNFS.ExternalStorageDirectoryPath}/SCCAP`;
+export const FILEPATH = `${RNFS.ExternalStorageDirectoryPath}/SCCAP`;
+
+// FIXME: error를 상위 try-catch로 전달하기 - redux 에서 비동기 처리 결과에 따른 제어가 어렵기 때문
 
 const handleAsync = async <T>({
   onSuccess,
@@ -165,8 +166,8 @@ export const deleteFileAsync = ({
   });
 };
 
-const extractFileNameFrom = (path: string) => {
-  return path.split('/').slice(-1);
+export const extractFileNameFrom = (path: string) => {
+  return path.split('/').slice(-1)[0];
 };
 
 export const copyFileAsync = ({

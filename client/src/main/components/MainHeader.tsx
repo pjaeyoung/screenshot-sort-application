@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from '@emotion/native';
-import BtnGoFolderSvg from '@/assets/btn-go-folder.svg';
-import BtnSettingSvg from '@/assets/btn-setting.svg';
+import BtnGoFolderSvg from '@/assets/icons/btn-go-folder.svg';
+import BtnSettingSvg from '@/assets/icons/btn-setting.svg';
 import { useNavigation } from '@react-navigation/native';
 
 const MainHeader: React.FC = () => {
@@ -30,4 +30,5 @@ const Wrapper = styled.View({
   marginTop: 40,
   marginBottom: 30,
   paddingHorizontal: 30,
+  zIndex: 1,
 });
