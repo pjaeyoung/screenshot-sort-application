@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { IStoredFolder } from '@/redux/folderSlice';
 
 // FIXME: error를 상위 try-catch로 전달하기 - redux 에서 비동기 처리 결과에 따른 제어가 어렵기 때문
 export function storeDataCurry<T>(key: string) {
@@ -25,8 +26,16 @@ export function getDataCurry<T>(key: string) {
   };
 }
 
-export default {
-  setPhotos: storeDataCurry('photos'),
-  getUserFolders: getDataCurry('userFolders'),
-  setUserFolders: storeDataCurry('userFolders'),
+const storageKeys = {
+  USER_FOLDERS: 'userFolders',
+  COMPLETED_TUTORIAL: 'completedTutorial',
 };
+
+const storage = {
+  getUserFolders: getDataCurry<IStoredFolder>(storageKeys.USER_FOLDERS),
+  setUserFolders: storeDataCurry<IStoredFolder>(storageKeys.USER_FOLDERS),
+  getCompletedTutorial: getDataCurry<boolean>(storageKeys.COMPLETED_TUTORIAL),
+  setCompletedTutorial: storeDataCurry<boolean>(storageKeys.COMPLETED_TUTORIAL),
+};
+
+export default storage;

@@ -1,6 +1,7 @@
 import BackgroundService from 'react-native-background-actions';
 import { addScreenshotListener } from 'react-native-detector';
 import * as RNFS from 'react-native-fs';
+import storage from './handleAsyncStorage';
 
 import { openApp } from 'rn-openapp';
 import { navigate } from './RootNavigation';
@@ -19,10 +20,10 @@ const userDidScreenshot = (path: string): void => {
   if (isPendingScreenshotPath(path)) return;
   openApp(packageId)
     .then(async () => {
-      return Promise.all([path, RNFS.readFile(path, 'base64')]);
+      return Promise.all([path, RNFS.readFile(path, 'base64'), storage.getCompletedTutorial()]);
     })
-    .then(([screenshotPath, screenshotBase64]) => {
-      navigate('Sort', { screenshotPath, screenshotBase64 });
+    .then(([screenshotPath, screenshotBase64, completedTutorial]) => {
+      navigate(completedTutorial ? 'Sort' : 'Tutorial', { screenshotPath, screenshotBase64 });
     })
     .catch(e => console.error(e));
 };
