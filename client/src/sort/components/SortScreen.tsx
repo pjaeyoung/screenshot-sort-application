@@ -75,6 +75,7 @@ const Sort: React.FC<Object> = () => {
         <TrashFolder
           onDrop={() =>
             FS.deleteFileAsync({
+              fullFilePath: true,
               filePath: screenshotPath,
               onSuccess: exitApp,
               onFailure: showSortErrorToast,

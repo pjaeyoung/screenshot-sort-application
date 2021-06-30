@@ -154,15 +154,17 @@ export const deleteFileAsync = ({
   filePath,
   onSuccess,
   onFailure,
+  fullFilePath = false,
 }: {
   filePath: string;
   onSuccess?: Function;
   onFailure?: Function;
+  fullFilePath: boolean;
 }) => {
   handleAsync<void>({
     onSuccess,
     onFailure,
-    asyncFunction: () => RNFS.unlink(`${FILEPATH}/${filePath}`),
+    asyncFunction: () => RNFS.unlink(fullFilePath ? filePath : `${FILEPATH}/${filePath}`),
   });
 };
 
