@@ -10,7 +10,6 @@ const SmartCaptureGuideScreen: React.FC = () => {
 
   const onPressLikeButton = async () => {
     await storage.setCompletedOnBoarding(true);
-    //FIXME: [ONBOARDING-05]로 이동하도록 수정할 것
     navigation.navigate('Main');
   };
 

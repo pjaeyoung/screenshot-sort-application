@@ -1,32 +1,28 @@
-import React, { useState, useCallback } from 'react';
-import { StyleSheet, View, Text, PermissionsAndroid } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-
-import { RoundButton, Permissions } from '@/shared/components';
-
-const { READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE } = PermissionsAndroid.PERMISSIONS;
+import React from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { RoundButton } from '@/shared/components';
+import { monitorScreenCapture } from '@/shared/utils/backgroundService';
+import requestPermissions from '@/shared/utils/requestPermissions';
+import storage from '@/shared/utils/handleAsyncStorage';
 
 const PermissionScreen: React.FC = () => {
   const navigation = useNavigation();
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-  const onPressLikeButton = () => {
-    setModalVisible(true);
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      setModalVisible(false);
-    }, []),
-  );
-
-  const onRejectCallback = () => {
-    //TO DO: [ONBAORDING-05]로 이동
-    //navigation.navigate('')
-  };
-
-  const onAcceptCallback = () => {
-    navigation.navigate('SmartCaptureGuide');
+  const onPressLikeButton = async () => {
+    try {
+      const granted = await requestPermissions();
+      if (granted) {
+        await monitorScreenCapture();
+        await storage.setGrantedPermissions(true);
+      } else {
+        await storage.setGrantedPermissions(false);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      navigation.navigate('SmartCaptureGuide');
+    }
   };
 
   return (
@@ -35,13 +31,6 @@ const PermissionScreen: React.FC = () => {
         <Text style={styles.smallText}>뒤죽박죽 섞인 스크린샷은 그만!✋{`\n`}</Text>
         스캡으로 쉽게 정리하세요!
       </Text>
-      <Permissions
-        permissions={[READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE]}
-        modalMessage="SCCAP 이(가) 기기의 사진, 미디어, 파일에 접근할 수 있도록 허용하시겠습니까?"
-        modalVisible={modalVisible}
-        onAcceptCallback={onAcceptCallback}
-        onRejectCallback={onRejectCallback}
-      />
       <View style={styles.buttonContainer}>
         <RoundButton
           buttonStyle={styles.likeButton}

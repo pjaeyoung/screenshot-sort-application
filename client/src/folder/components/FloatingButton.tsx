@@ -3,14 +3,21 @@ import { StyleSheet, GestureResponderEvent, StyleProp, ViewStyle } from 'react-n
 import { FAB, Icon } from 'react-native-elements';
 
 interface IFloatingButtonProps {
+  loading?: boolean;
   onPress: (event: GestureResponderEvent) => void;
   iconName: string;
   positionStyle: StyleProp<ViewStyle>;
 }
 
-const FloatingButton: React.FC<IFloatingButtonProps> = ({ onPress, iconName, positionStyle }) => {
+const FloatingButton: React.FC<IFloatingButtonProps> = ({
+  loading,
+  onPress,
+  iconName,
+  positionStyle,
+}) => {
   return (
     <FAB
+      loading={loading}
       style={[styles.fab, positionStyle]}
       buttonStyle={styles.button}
       title={

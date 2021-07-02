@@ -1,13 +1,5 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -22,12 +14,9 @@ import TutorialScreen from '@/tutorial';
 import { FolderScreen } from '@/folder/components';
 import store from '@/redux/store';
 import { defaultOptionsWithHeader } from '@/shared/constants';
-import requestPermissions from '@/shared/utils/requestPermissions';
 import { groupScreens } from '@/shared/utils/navigationUtils';
 import { IScreenGroup } from '@/shared/types';
-//import { Header } from '@/shared/components';
 
-//import TestFolder from '@/testFolder';
 const onBoardingScreens: IScreenGroup = {
   Guides: GuidesScreen,
   Permissions: PermissionScreen,
@@ -45,8 +34,7 @@ const App: React.FC<void> = () => {
             headerShown: false,
           }}
           headerMode="screen"
-          initialRouteName={'Main'}>
-          {/* <Stack.Screen name="testFolder" component={TestFolder} /> */}
+          initialRouteName="Main">
           <Stack.Screen name="Main" component={MainScreen} />
           {groupScreens({ group: onBoardingScreens, Screen: Stack.Screen })}
           <Stack.Screen name="Tutorial" component={TutorialScreen} />
@@ -64,7 +52,6 @@ const App: React.FC<void> = () => {
             name="Photo"
             component={PhotoScreen}
             options={{
-              //header: props => <Header {...props} />,
               ...defaultOptionsWithHeader,
             }}
           />

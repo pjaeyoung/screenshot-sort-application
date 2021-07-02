@@ -6,6 +6,7 @@ export interface IStoredFolder {
   id: string;
   folderName: string;
   borderColor: string;
+  filePath: string;
 }
 
 export enum LOADING {
@@ -15,52 +16,59 @@ export enum LOADING {
   FAILED = 'failed',
 }
 
-interface IUserFolderState {
+export interface IUserFolderState {
   entries: IStoredFolder[];
   loading: LOADING;
 }
 
-// FIXME: try - catch문으로 감싸서 loading 처리
-
 const increment = createAsyncThunk('increment', async (newUserFolder: IStoredFolder, thunkAPI) => {
   const { entries, loading } = thunkAPI.getState().folders as IUserFolderState;
-  const newEntries = [...entries, newUserFolder];
-
-  await FS.createFolderAsync({
-    folderName: newUserFolder.folderName,
-  });
-
-  await storage.setUserFolders(entries);
-  return { entries: newEntries, loading };
+  try {
+    const newEntries = [...entries, newUserFolder];
+    await FS.createFolder(newUserFolder.folderName);
+    await storage.setUserFolders(newEntries);
+    return { entries: newEntries, loading };
+  } catch (error) {
+    console.error(error);
+    return thunkAPI.rejectWithValue({ entries, loading: LOADING.FAILED });
+  }
 });
 
 const decrement = createAsyncThunk('decrement', async (removedId: string, thunkAPI) => {
   const { entries, loading } = thunkAPI.getState().folders as IUserFolderState;
-  const removedUserFolder = entries.find(({ id }) => id === removedId);
-  if (removedUserFolder === undefined) throw new Error('NOT FOUND');
-  await FS.deleteFolderAsync({
-    folderName: removedUserFolder.folderName,
-  });
+  try {
+    const removedUserFolder = entries.find(({ id }) => id === removedId);
+    if (removedUserFolder === undefined) throw new Error();
+    await FS.deleteFolder(removedUserFolder.folderName);
 
-  const newEntries = entries.filter(({ id }) => id !== removedId);
-  await storage.setUserFolders(newEntries);
-  return { entries: newEntries, loading };
+    const newEntries = entries.filter(({ id }) => id !== removedId);
+    await storage.setUserFolders(newEntries);
+    return { entries: newEntries, loading };
+  } catch (error) {
+    console.error(error);
+    return thunkAPI.rejectWithValue({ entries, loading: LOADING.FAILED });
+  }
 });
 
 const update = createAsyncThunk('update', async (updatedUserFolder: IStoredFolder, thunkAPI) => {
   const { entries, loading } = thunkAPI.getState().folders as IUserFolderState;
-  const updatedIndex = entries.findIndex(({ id }) => id === updatedUserFolder.id);
-  if (updatedIndex === -1) throw new Error('NOT FOUND');
+  try {
+    const updatedIndex = entries.findIndex(({ id }) => id === updatedUserFolder.id);
+    if (updatedIndex === -1) throw Error('아이디를 찾을 수 없습니다.');
+    const oldFolderName = entries[updatedIndex].folderName;
 
-  const oldFolderName = entries[updatedIndex].folderName;
-  await FS.renameFolderAsync({ oldFolderName, newFolderName: updatedUserFolder.folderName });
-  const newEntries = [
-    ...entries.slice(0, updatedIndex),
-    updatedUserFolder,
-    ...entries.slice(updatedIndex + 1),
-  ];
-  await storage.setUserFolders(newEntries);
-  return { entries: newEntries, loading };
+    await FS.renameFolder({ oldFolderName, newFolderName: updatedUserFolder.folderName });
+    const newEntries = [
+      ...entries.slice(0, updatedIndex),
+      updatedUserFolder,
+      ...entries.slice(updatedIndex + 1),
+    ];
+    await storage.setUserFolders(newEntries);
+    return { entries: newEntries, loading };
+  } catch (error) {
+    console.error(error);
+    return thunkAPI.rejectWithValue({ entries, loading: LOADING.FAILED });
+  }
 });
 
 const initialState: IUserFolderState = {
@@ -68,49 +76,44 @@ const initialState: IUserFolderState = {
   loading: LOADING.IDLE,
 };
 
+const handlePending = (state: IUserFolderState) => {
+  state.loading = LOADING.PENDING;
+  return state;
+};
+
+const handleFailed = (state: IUserFolderState) => {
+  state.loading = LOADING.FAILED;
+  return state;
+};
+
+const handleSucceeded = (state: IUserFolderState, action: PayloadAction<IUserFolderState>) => {
+  action.payload.loading = LOADING.SUCCEEDED;
+  return action.payload;
+};
+
 const folderSlice = createSlice({
   name: 'folders',
   initialState,
-  reducers: {},
-  extraReducers: {
-    [`${increment.pending}`]: state => {
-      state.loading = LOADING.PENDING;
+  reducers: {
+    setUserAllFolders: (state, action: PayloadAction<IStoredFolder[] | undefined | null>) => {
+      state.entries = action.payload ?? [];
       return state;
-    },
-    [`${increment.rejected}`]: state => {
-      state.loading = LOADING.FAILED;
-      return state;
-    },
-    [`${increment.fulfilled}`]: (state, action: PayloadAction<IUserFolderState>) => {
-      action.payload.loading = LOADING.SUCCEEDED;
-      return action.payload;
-    },
-    [`${decrement.pending}`]: state => {
-      state.loading = LOADING.PENDING;
-      return state;
-    },
-    [`${decrement.rejected}`]: state => {
-      state.loading = LOADING.FAILED;
-      return state;
-    },
-    [`${decrement.fulfilled}`]: (state, action: PayloadAction<IUserFolderState>) => {
-      action.payload.loading = LOADING.SUCCEEDED;
-      return action.payload;
-    },
-    [`${update.pending}`]: state => {
-      state.loading = LOADING.PENDING;
-      return state;
-    },
-    [`${update.rejected}`]: state => {
-      state.loading = LOADING.FAILED;
-      return state;
-    },
-    [`${update.fulfilled}`]: (state, action: PayloadAction<IUserFolderState>) => {
-      action.payload.loading = LOADING.SUCCEEDED;
-      return action.payload;
     },
   },
+  extraReducers: {
+    [`${increment.pending}`]: handlePending,
+    [`${increment.rejected}`]: handleFailed,
+    [`${increment.fulfilled}`]: handleSucceeded,
+    [`${decrement.pending}`]: handlePending,
+    [`${decrement.rejected}`]: handleFailed,
+    [`${decrement.fulfilled}`]: handleSucceeded,
+    [`${update.pending}`]: handlePending,
+    [`${update.rejected}`]: handleFailed,
+    [`${update.fulfilled}`]: handleSucceeded,
+  },
 });
+
+const { setUserAllFolders: _setUserAllFolders } = folderSlice.actions;
 
 export default folderSlice.reducer;
 
@@ -118,14 +121,19 @@ export const useUserFolders = () => {
   const dispatch = useAppDispatch();
   const { entries: userFolders, loading } = useAppSelector(state => state.folders);
   const addUserFolder = (payload: IStoredFolder) => {
-    dispatch(increment(payload));
+    return dispatch(increment(payload));
   };
+
+  const setUserAllFolders = (payload: IStoredFolder[] | null | undefined) => {
+    dispatch(_setUserAllFolders(payload));
+  };
+
   const removeUserFolder = (removedId: string) => {
-    dispatch(decrement(removedId));
+    return dispatch(decrement(removedId));
   };
 
   const editUserFolder = (payload: IStoredFolder) => {
-    dispatch(update(payload));
+    return dispatch(update(payload));
   };
 
   const getUserAllFolders = () => userFolders;
@@ -137,6 +145,7 @@ export const useUserFolders = () => {
     getUserAllFolders,
     getUserFolderById,
     addUserFolder,
+    setUserAllFolders,
     removeUserFolder,
     editUserFolder,
   };
