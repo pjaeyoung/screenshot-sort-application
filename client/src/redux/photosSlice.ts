@@ -138,7 +138,6 @@ export const removePhotoInStorage = createAsyncThunk<
     }
 
     const { folderId, photoName } = photosSlice.entities[photoId];
-
     const photos = await getDataCurry<IPhotosInStorage>('photos')();
 
     if (photos && photos.idsByFolderId && photos.entities) {

@@ -1,12 +1,22 @@
 import React from 'react';
-import { TouchableHighlight, StyleSheet } from 'react-native';
+import { TouchableHighlight, Text, StyleSheet } from 'react-native';
 
 import theme from '@/shared/theme';
 
-const RoundButton: React.FC<{ onPress: Function }> = ({ children, onPress }) => {
+const RoundButton: React.FC<{ buttonStyle?: object; textStyle?: object; onPress?: Function }> = ({
+  children,
+  buttonStyle,
+  textStyle,
+  onPress,
+}) => {
   return (
-    <TouchableHighlight style={styles.Button} onPress={onPress}>
-      {children}
+    <TouchableHighlight
+      style={{
+        ...styles.Button,
+        ...buttonStyle,
+      }}
+      onPress={onPress}>
+      <Text style={{ ...textStyle }}>{children}</Text>
     </TouchableHighlight>
   );
 };

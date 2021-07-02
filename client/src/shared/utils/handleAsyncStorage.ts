@@ -29,6 +29,7 @@ export function getDataCurry<T>(key: string) {
 const storageKeys = {
   USER_FOLDERS: 'userFolders',
   COMPLETED_TUTORIAL: 'completedTutorial',
+  COMPLETED_ONBOARDING: 'completedOnBoarding',
 };
 
 const storage = {
@@ -36,6 +37,8 @@ const storage = {
   setUserFolders: storeDataCurry<IStoredFolder>(storageKeys.USER_FOLDERS),
   getCompletedTutorial: getDataCurry<boolean>(storageKeys.COMPLETED_TUTORIAL),
   setCompletedTutorial: storeDataCurry<boolean>(storageKeys.COMPLETED_TUTORIAL),
+  getCompletedOnBoarding: getDataCurry<boolean>(storageKeys.COMPLETED_ONBOARDING),
+  setCompletedOnBoarding: storeDataCurry<boolean>(storageKeys.COMPLETED_ONBOARDING),
 };
 
 export default storage;

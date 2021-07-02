@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from '@emotion/native';
 import { BasicFolderSvg } from '@/shared/components';
 import { userFolderLayoutData } from '../constants';
@@ -8,14 +8,20 @@ import MainHeader from './MainHeader';
 import { FolderSvgs } from '@/shared/components';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useCheckCompletedOnBoarding } from '@/shared/hooks';
 
 // TODO : asyncStorage => redux 동기화 처리
 const MainScreen: React.FC<Object> = () => {
   const navigation = useNavigation();
   const { userFolders } = useUserFolders();
+  const completedOnBoarding = useCheckCompletedOnBoarding();
 
   // 유저가 생성한 폴더 개수에 맞는 레이아웃 결정
   const layout = userFolderLayoutData[userFolders.length - 1];
+
+  useEffect(() => {
+    completedOnBoarding !== null && !completedOnBoarding && navigation.navigate('Guides');
+  }, [completedOnBoarding]);
 
   return (
     <Wrapper>
