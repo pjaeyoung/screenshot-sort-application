@@ -1,21 +1,38 @@
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import styled from '@emotion/native';
-import { BasicFolderSvg } from '@/shared/components';
+
 import { userFolderLayoutData } from '../constants';
 import { useUserFolders } from '@/redux/store';
+import { FolderSvgs } from '@/shared/components';
+import storage from '@/shared/utils/handleAsyncStorage';
+
+import { BasicFolderSvg } from '@/shared/components';
 import CreateFolderMessage from './CreateFolderMessage';
 import MainHeader from './MainHeader';
-import { FolderSvgs } from '@/shared/components';
-import { TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
-// TODO : asyncStorage => redux 동기화 처리
+import { useNavigation } from '@react-navigation/native';
+import { useCheckCompletedOnBoarding } from '@/shared/hooks';
+
 const MainScreen: React.FC<Object> = () => {
   const navigation = useNavigation();
-  const { userFolders } = useUserFolders();
+  const { userFolders, setUserAllFolders } = useUserFolders();
+  const completedOnBoarding = useCheckCompletedOnBoarding();
 
   // 유저가 생성한 폴더 개수에 맞는 레이아웃 결정
   const layout = userFolderLayoutData[userFolders.length - 1];
+
+  // asyncStorage에 저장된 userFolders를 redux와 동기화 처리
+  React.useEffect(() => {
+    async function synchronizeStorageAndRedux() {
+      setUserAllFolders(await storage.getUserFolders());
+    }
+    synchronizeStorageAndRedux();
+  }, []);
+
+  React.useEffect(() => {
+    completedOnBoarding !== null && !completedOnBoarding && navigation.navigate('Guides');
+  }, [completedOnBoarding]);
 
   return (
     <Wrapper>

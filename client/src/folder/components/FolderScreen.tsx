@@ -6,38 +6,56 @@ import { ToastAndroid, TouchableOpacity } from 'react-native';
 import { KeyboardAccessoryView } from '@flyerhq/react-native-keyboard-accessory-view';
 import { recommendedFolderNames, pallet } from '../constants';
 
-import { IStoredFolder, useUserFolders } from '@/redux/store';
+import { IStoredFolder, LOADING, useUserFolders } from '@/redux/store';
+import ReduxError, { ReduxFuncReturnType } from '../utils/ReduxError';
+import { FILEPATH } from '@/shared/utils/fsFunctions';
 
 import renderScrollable from './renderScrollable';
 import EditableFolderSvg from './EditableFolderSvg';
 import { FolderSvgs } from '@/shared/components';
 
-// FIXME : redux loading 상황 처리 - pending일 때 spinner 표시 , failed일 때 Toast알람
 const FolderScreen: React.FC = () => {
   const [editMode, setEditMode] = React.useState<boolean>(false);
   const [folderName, setFolderName] = React.useState<string>('');
   const { userFolders } = useUserFolders();
 
   const [borderColor, setBorderColor] = React.useState<string>('');
+  const duplicatedFolderName = ({ folderName, id }: { folderName: string; id: string }) =>
+    userFolders.find(userFolder => userFolder.id !== id && userFolder.folderName === folderName);
 
-  const onSubmitEditing = ({
+  const exitEditMode = () => {
+    setFolderName('');
+    setEditMode(prev => !prev);
+  };
+
+  const onSubmitEditing = async ({
     id,
     reduxFunc,
   }: {
     id: string;
-    reduxFunc: (props: IStoredFolder) => void;
+    reduxFunc: (props: IStoredFolder) => Promise<ReduxFuncReturnType>;
   }) => {
-    if (editMode && folderName.length !== 0) {
-      if (
-        userFolders.find(userFolder => userFolder.id !== id && userFolder.folderName === folderName)
-      ) {
+    if (folderName.length !== 0) {
+      if (duplicatedFolderName({ folderName, id })) {
         ToastAndroid.show('중복된 폴더명 입력', ToastAndroid.SHORT);
         return;
       }
-      reduxFunc({ id, folderName, borderColor });
+      try {
+        const {
+          type,
+          payload: { loading },
+        } = await reduxFunc({ id, folderName, borderColor, filePath: `${FILEPATH}/${folderName}` });
+
+        if (loading === LOADING.FAILED) throw new ReduxError(type);
+        exitEditMode();
+      } catch (error) {
+        if (error instanceof ReduxError) {
+          ToastAndroid.show(error.message, ToastAndroid.SHORT);
+        }
+      }
+      return;
     }
-    setFolderName('');
-    setEditMode(prev => !prev);
+    exitEditMode();
   };
 
   return (

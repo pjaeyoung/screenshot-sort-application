@@ -50,7 +50,7 @@ const options = {
 
 // 스크린샷 감지 서비스 실행
 function monitorScreenCapture() {
-  BackgroundService.start(registerScreenCaptureEvent, options);
+  return BackgroundService.start(registerScreenCaptureEvent, options);
 }
 
 export { monitorScreenCapture };

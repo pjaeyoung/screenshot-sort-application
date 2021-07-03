@@ -13,15 +13,15 @@ const Photo: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { id } = route.params; //redux store에 데이터 저장하고 가져오는 방식으로 교체할 예정
-  const [isControlMode, setIsControlMode] = useState<boolean>(true);
+  //const [isControlMode, setIsControlMode] = useState<boolean>(true);
   const { getUserFolderById } = useUserFolders();
   const { getPhotoById } = usePhotosInFolder();
   const { folderId, source } = getPhotoById(id) || {};
   const { folderName } = getUserFolderById(folderId) || {};
 
-  const onPressToggleControlMode = () => {
-    setIsControlMode(!isControlMode);
-  };
+  // const onPressToggleControlMode = () => {
+  //   //setIsControlMode(!isControlMode);
+  // };
 
   const onPressTrashButton = async () => {
     Alert.alert('사진 삭제', '사진을 정말 삭제하시겠습니까?', [
@@ -47,23 +47,28 @@ const Photo: React.FC = () => {
   useEffect(function setInitialScreenOptions() {
     navigation.setOptions({
       title: folderName,
+      headerShown: true,
     });
   }, []);
 
-  useEffect(
-    function toggleControlMode() {
-      navigation.setOptions({
-        headerShown: isControlMode,
-      });
-    },
-    [isControlMode],
-  );
+  // useEffect(
+  //   function toggleControlMode() {
+  //     navigation.setOptions({
+  //       headerShown: isControlMode,
+  //     });
+  //   },
+  //   [isControlMode],
+  // );
 
   return (
-    <TouchableWithoutFeedback style={styles.container} onPress={onPressToggleControlMode}>
+    <TouchableWithoutFeedback
+      style={styles.container}
+      // onPress={onPressToggleControlMode}
+    >
       <ImageBackground style={styles.Image} source={{ uri: `data:image/*;base64,${source}` }}>
         <View style={styles.Bottom}>
-          {isControlMode && <TrashButton onPress={onPressTrashButton} />}
+          {/* {isControlMode && <TrashButton onPress={onPressTrashButton} />} */}
+          <TrashButton onPress={onPressTrashButton} />
         </View>
       </ImageBackground>
     </TouchableWithoutFeedback>

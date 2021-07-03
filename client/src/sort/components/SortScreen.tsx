@@ -40,25 +40,26 @@ const Sort: React.FC<Object> = () => {
         key={id}
         style={userFolderLayoutData[index]}
         borderColor={borderColor}
-        onDrop={() =>
-          FS.copyFileAsync({
-            originPath: screenshotPath,
-            destFolderName: folderName,
-            onSuccess: () => {
-              dispatch(
-                storePhotoInStorage({
-                  photoData: {
-                    id: Date.now(),
-                    photoName: FS.extractFileNameFrom(screenshotPath),
-                    folderId: id,
-                  },
-                  folderName,
-                }),
-              ).then(() => exitApp());
-            },
-            onFailure: showSortErrorToast,
-          })
-        }>
+        onDrop={async () => {
+          try {
+            await FS.copyFile({
+              originPath: screenshotPath,
+              destFolderName: folderName,
+            });
+            await dispatch(
+              storePhotoInStorage({
+                photoData: {
+                  id: Date.now(),
+                  photoName: FS.extractFileNameFrom(screenshotPath),
+                  folderId: id,
+                },
+              }),
+            );
+            exitApp();
+          } catch (error) {
+            showSortErrorToast();
+          }
+        }}>
         <FolderName>{folderName}</FolderName>
       </FolderSvg>
     );
@@ -73,32 +74,30 @@ const Sort: React.FC<Object> = () => {
         {UserFolders}
         <BasicFolder onDrop={exitApp} />
         <TrashFolder
-          onDrop={() =>
-            FS.deleteFileAsync({
-              fullFilePath: true,
-              filePath: screenshotPath,
-              onSuccess: exitApp,
-              onFailure: showSortErrorToast,
-            })
-          }
+          onDrop={async () => {
+            try {
+              await FS.deleteFile(screenshotPath);
+              exitApp();
+            } catch {
+              showSortErrorToast();
+            }
+          }}
         />
         <ShareFolder
-          onDrop={() => {
-            Share.open({ title: '', url: `data:image/png;base64,${screenhsotBase64}` })
-              .then(() => {
-                FS.deleteFileAsync({
-                  filePath: screenshotPath,
-                  onSuccess: () => {
-                    navigation.navigate('Main');
-                    exitApp();
-                  },
-                  onFailure: showSortErrorToast,
-                });
-              })
-              .catch(error => {
-                if (error.message === SortError.cancelShare) return;
-                error && console.error(error);
+          onDrop={async () => {
+            try {
+              await Share.open({
+                title: '',
+                url: `data:image/png;base64,${screenhsotBase64}`,
               });
+              await FS.deleteFile(screenshotPath);
+              navigation.navigate('Main');
+              exitApp();
+            } catch (error) {
+              if (error.message === SortError.cancelShare) return;
+
+              showSortErrorToast();
+            }
           }}
         />
         <Screenshot screenshotPath={screenshotPath} />

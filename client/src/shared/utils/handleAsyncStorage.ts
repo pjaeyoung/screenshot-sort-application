@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IStoredFolder } from '@/redux/folderSlice';
 
-// FIXME: error를 상위 try-catch로 전달하기 - redux 에서 비동기 처리 결과에 따른 제어가 어렵기 때문
 export function storeDataCurry<T>(key: string) {
   return async function storeData(value: T) {
     try {
@@ -10,6 +9,7 @@ export function storeDataCurry<T>(key: string) {
     } catch (e) {
       console.error(e);
       console.warn(`AsyncStorage에 key(${key}), value(${value}) 를 저장하지 못했습니다.`);
+      throw e;
     }
   };
 }
@@ -22,6 +22,7 @@ export function getDataCurry<T>(key: string) {
     } catch (e) {
       console.error(e);
       console.warn(`AsyncStorage에서 key(${key})로 value를 불러오지 못했습니다.`);
+      throw e;
     }
   };
 }
@@ -29,13 +30,19 @@ export function getDataCurry<T>(key: string) {
 const storageKeys = {
   USER_FOLDERS: 'userFolders',
   COMPLETED_TUTORIAL: 'completedTutorial',
+  COMPLETED_ONBOARDING: 'completedOnBoarding',
+  GRANTED_PERMISSIONS: 'grantedPermissions',
 };
 
 const storage = {
-  getUserFolders: getDataCurry<IStoredFolder>(storageKeys.USER_FOLDERS),
-  setUserFolders: storeDataCurry<IStoredFolder>(storageKeys.USER_FOLDERS),
+  getUserFolders: getDataCurry<IStoredFolder[]>(storageKeys.USER_FOLDERS),
+  setUserFolders: storeDataCurry<IStoredFolder[]>(storageKeys.USER_FOLDERS),
   getCompletedTutorial: getDataCurry<boolean>(storageKeys.COMPLETED_TUTORIAL),
   setCompletedTutorial: storeDataCurry<boolean>(storageKeys.COMPLETED_TUTORIAL),
+  getCompletedOnBoarding: getDataCurry<boolean>(storageKeys.COMPLETED_ONBOARDING),
+  setCompletedOnBoarding: storeDataCurry<boolean>(storageKeys.COMPLETED_ONBOARDING),
+  getGrantedPermissions: getDataCurry<boolean>(storageKeys.GRANTED_PERMISSIONS),
+  setGrantedPermissions: storeDataCurry<boolean>(storageKeys.GRANTED_PERMISSIONS),
 };
 
 export default storage;

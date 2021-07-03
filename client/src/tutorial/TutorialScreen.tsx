@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from '@emotion/native';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ToastAndroid } from 'react-native';
 import { SortScreen } from '@/sort/components';
 import { Overlay } from 'react-native-elements';
 import { SpeechBubble } from './components';
@@ -10,11 +10,16 @@ import storage from '@/shared/utils/handleAsyncStorage';
 const TutorialScreen: React.FC = () => {
   const [overlayVisible, setOverlayVisible] = React.useState<boolean>(true);
   const [screenNumber, setScreenNumber] = React.useState<number>(0);
-  const incrementScreenNumber = () => {
+  const incrementScreenNumber = async () => {
     if (screenNumber + 1 >= speechBubbles.length) {
-      setOverlayVisible(false);
-      storage.setCompletedTutorial(true);
-      return;
+      try {
+        await storage.setCompletedTutorial(true);
+        setOverlayVisible(false);
+      } catch {
+        ToastAndroid.show('튜토리얼 완료 실패', ToastAndroid.SHORT);
+      } finally {
+        return;
+      }
     }
     setScreenNumber(prev => prev + 1);
   };

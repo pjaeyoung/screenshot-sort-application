@@ -9,13 +9,14 @@ import {
   ViewStyle,
   NativeSyntheticEvent,
   TextInputSubmitEditingEventData,
+  ToastAndroid,
 } from 'react-native';
 import styled from '@emotion/native';
 
 import { useNavigation } from '@react-navigation/native';
 
 import { BasicFolderSvg } from '@/shared/components';
-import { useUserFolders } from '@/redux/store';
+import { LOADING, useUserFolders } from '@/redux/store';
 import { userFolderLayoutData } from '../constants';
 import { FolderSvgs } from '@/shared/components';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
@@ -24,6 +25,7 @@ import { defaultBorderColors } from '@/shared/constants';
 import CreateFolderMessage from './CreateFolderMessage';
 import FloatingButton from './FloatingButton';
 import Alert, { IAlertButton } from './Alert';
+import ReduxError, { ReduxFuncReturnType } from '../utils/ReduxError';
 
 interface renderScrollableProps {
   editMode: boolean;
@@ -38,145 +40,159 @@ interface renderScrollableProps {
   onSubmitEditing: Function;
 }
 
-const renderScrollable = ({
-  editMode,
-  setEditMode,
-  setBorderColor,
-  setFolderName,
-  onSubmitEditing,
-  renderEditableFolderSvg,
-}: renderScrollableProps) => (panHandlers: GestureResponderHandlers) => {
-  const navigation = useNavigation();
-  const [alertMessages, setAlertMessages] = React.useState<{
-    title: string;
-    body?: string;
-    buttons?: IAlertButton[];
-  }>({
-    title: '',
-  });
-  const onDismissAlert = () => setAlertMessages({ title: '' });
-
-  const { userFolders, removeUserFolder, addUserFolder, editUserFolder } = useUserFolders();
-  const [editableIndex, setEditableIndex] = React.useState<number>(-1);
-
-  const onCreateMode = () => {
-    if (userFolders.length === 7) {
-      setAlertMessages({
-        title: '분류 폴더는 7개까지 생성 가능합니다.',
-        buttons: [{ name: '확인', onPress: onDismissAlert }],
-      });
-      return;
-    }
-    setBorderColor(defaultBorderColors[userFolders.length]);
-    setEditableIndex(userFolders.length);
-    setEditMode(true);
-  };
-
-  const onEditMode = (index: number) => () => {
-    setBorderColor(userFolders[index].borderColor);
-    setFolderName(userFolders[index].folderName);
-    setEditableIndex(index);
-    setEditMode(true);
-  };
-
-  const onCompleteEdit = () => {
-    const createMode = !userFolders[editableIndex];
-
-    const id = createMode ? `${Date.now()}` : userFolders[editableIndex].id;
-    const reduxFunc = createMode ? addUserFolder : editUserFolder;
-    onSubmitEditing({ id, reduxFunc });
-  };
-
-  const onClickDeleteButton = (id: string) => () => {
-    setAlertMessages({
-      title: '폴더를 삭제하겠습니까?',
-      body: '(원본은 삭제되지 않습니다.)',
-      buttons: [
-        {
-          name: '취소',
-          onPress: onDismissAlert,
-        },
-        {
-          name: '삭제',
-          onPress: () => {
-            removeUserFolder(id);
-            onDismissAlert();
-          },
-        },
-      ],
+const renderScrollable =
+  ({
+    editMode,
+    setEditMode,
+    setBorderColor,
+    setFolderName,
+    onSubmitEditing,
+    renderEditableFolderSvg,
+  }: renderScrollableProps) =>
+  (panHandlers: GestureResponderHandlers) => {
+    const navigation = useNavigation();
+    const [alertMessages, setAlertMessages] = React.useState<{
+      title: string;
+      body?: string;
+      buttons?: IAlertButton[];
+    }>({
+      title: '',
     });
-  };
+    const onDismissAlert = () => setAlertMessages({ title: '' });
 
-  const { scrollRef } = useScrollTop(editMode);
+    const { loading, userFolders, removeUserFolder, addUserFolder, editUserFolder } =
+      useUserFolders();
+    const [editableIndex, setEditableIndex] = React.useState<number>(-1);
 
-  const UserFolders = React.useCallback(
-    () => (
-      <>
-        {userFolders.map(({ id, folderName, borderColor }, index) => {
-          const FolderSvg = FolderSvgs[index];
-          return (
-            <React.Fragment key={id}>
-              <TouchableOpacity
-                style={[userFolderLayoutData[index].folderLayout]}
-                onPress={onEditMode(index)}>
-                <FolderSvg borderColor={borderColor}>
-                  <FolderName top={index === 1 ? '60%' : '45%'}>{folderName}</FolderName>
-                </FolderSvg>
-              </TouchableOpacity>
-              {!editMode && (
-                <DeleteButton
-                  style={userFolderLayoutData[index].deleteButtonLayout}
-                  onPressIn={onClickDeleteButton(id)}>
-                  <Icon name="remove" color="#fff" />
-                </DeleteButton>
-              )}
-            </React.Fragment>
-          );
-        })}
-      </>
-    ),
-    [userFolders, editMode, editableIndex],
-  );
+    const onCreateMode = () => {
+      if (userFolders.length === 7) {
+        setAlertMessages({
+          title: '분류 폴더는 7개까지 생성 가능합니다.',
+          buttons: [{ name: '확인', onPress: onDismissAlert }],
+        });
+        return;
+      }
+      setBorderColor(defaultBorderColors[userFolders.length]);
+      setEditableIndex(userFolders.length);
+      setEditMode(true);
+    };
 
-  return (
-    <Wrapper>
-      {!editMode && userFolders.length === 0 && <CreateFolderMessage />}
-      <FloatingButton
-        positionStyle={editMode ? styles.completeButton : styles.createButton}
-        iconName={editMode ? 'check' : 'add'}
-        onPress={editMode ? onCompleteEdit : onCreateMode}
-      />
-      {!editMode && (
-        <FloatingButton
-          onPress={() => navigation.navigate('Main')}
-          positionStyle={styles.GoToMainButton}
-          iconName="check"
-        />
-      )}
-      <BasicFolderSvg style={styles.basicFolderSvg} />
-      <FolderSvgsScrollView
-        ref={scrollRef}
-        scrollEnabled={editMode}
-        {...panHandlers}
-        keyboardShouldPersistTaps="always">
-        <UserFolders />
-        <Scrollable />
-        {editMode &&
-          renderEditableFolderSvg({
-            editableIndex,
-            folderLayout: userFolderLayoutData[editableIndex].folderLayout,
-            onSubmitEditing: onCompleteEdit,
+    const onEditMode = (index: number) => () => {
+      setBorderColor(userFolders[index].borderColor);
+      setFolderName(userFolders[index].folderName);
+      setEditableIndex(index);
+      setEditMode(true);
+    };
+
+    const onCompleteEdit = () => {
+      const createMode = !userFolders[editableIndex];
+
+      const id = createMode ? `${Date.now()}` : userFolders[editableIndex].id;
+      const reduxFunc = createMode ? addUserFolder : editUserFolder;
+      onSubmitEditing({ id, reduxFunc });
+    };
+
+    const onClickDeleteButton = (id: string) => () => {
+      setAlertMessages({
+        title: '폴더를 삭제하겠습니까?',
+        body: '(원본은 삭제되지 않습니다.)',
+        buttons: [
+          {
+            name: '취소',
+            onPress: onDismissAlert,
+          },
+          {
+            name: '삭제',
+            onPress: async () => {
+              try {
+                const {
+                  type,
+                  payload: { loading },
+                } = await (removeUserFolder(id) as Promise<ReduxFuncReturnType>);
+                if (loading === LOADING.FAILED) throw new ReduxError(type);
+                onDismissAlert();
+              } catch (error) {
+                if (error instanceof ReduxError) {
+                  ToastAndroid.show(error.message, ToastAndroid.SHORT);
+                }
+              }
+            },
+          },
+        ],
+      });
+    };
+
+    const { scrollRef } = useScrollTop(editMode);
+
+    const UserFolders = React.useCallback(
+      () => (
+        <>
+          {userFolders.map(({ id, folderName, borderColor }, index) => {
+            const FolderSvg = FolderSvgs[index];
+            return (
+              <React.Fragment key={id}>
+                <TouchableOpacity
+                  style={[userFolderLayoutData[index].folderLayout]}
+                  onPress={onEditMode(index)}>
+                  <FolderSvg borderColor={borderColor}>
+                    <FolderName top={index === 1 ? '60%' : '45%'}>{folderName}</FolderName>
+                  </FolderSvg>
+                </TouchableOpacity>
+                {!editMode && (
+                  <DeleteButton
+                    style={userFolderLayoutData[index].deleteButtonLayout}
+                    onPressIn={onClickDeleteButton(id)}>
+                    <Icon name="remove" color="#fff" />
+                  </DeleteButton>
+                )}
+              </React.Fragment>
+            );
           })}
-      </FolderSvgsScrollView>
-      <Alert
-        isVisible={alertMessages.title.length !== 0}
-        title={alertMessages.title}
-        body={alertMessages.body}
-        buttons={alertMessages.buttons}
-      />
-    </Wrapper>
-  );
-};
+        </>
+      ),
+      [userFolders, editMode, editableIndex],
+    );
+
+    return (
+      <Wrapper>
+        {!editMode && userFolders.length === 0 && <CreateFolderMessage />}
+        <FloatingButton
+          loading={editMode && loading === LOADING.PENDING}
+          positionStyle={editMode ? styles.completeButton : styles.createButton}
+          iconName={editMode ? 'check' : 'add'}
+          onPress={editMode ? onCompleteEdit : onCreateMode}
+        />
+        {!editMode && (
+          <FloatingButton
+            onPress={() => navigation.navigate('Main')}
+            positionStyle={styles.GoToMainButton}
+            iconName="check"
+          />
+        )}
+        <BasicFolderSvg style={styles.basicFolderSvg} />
+        <FolderSvgsScrollView
+          ref={scrollRef}
+          scrollEnabled={editMode}
+          {...panHandlers}
+          keyboardShouldPersistTaps="always">
+          <UserFolders />
+          <Scrollable />
+          {editMode &&
+            renderEditableFolderSvg({
+              editableIndex,
+              folderLayout: userFolderLayoutData[editableIndex].folderLayout,
+              onSubmitEditing: onCompleteEdit,
+            })}
+        </FolderSvgsScrollView>
+        <Alert
+          isVisible={alertMessages.title.length !== 0}
+          title={alertMessages.title}
+          body={alertMessages.body}
+          buttons={alertMessages.buttons}
+        />
+      </Wrapper>
+    );
+  };
 
 export default renderScrollable;
 
