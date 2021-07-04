@@ -16,6 +16,7 @@ import store from '@/redux/store';
 import { defaultOptionsWithHeader } from '@/shared/constants';
 import { groupScreens } from '@/shared/utils/navigationUtils';
 import { IScreenGroup } from '@/shared/types';
+import { useCheckCompletedOnBoarding } from './shared/hooks';
 
 const onBoardingScreens: IScreenGroup = {
   Guides: GuidesScreen,
@@ -26,6 +27,11 @@ const onBoardingScreens: IScreenGroup = {
 const Stack = createStackNavigator();
 
 const App: React.FC<void> = () => {
+  const completedOnboarding = useCheckCompletedOnBoarding();
+  // asyncStorage에서 값을 가져오는 시간 동안 null 처리
+  // TODO: 추후 업데이트에서 로딩화면 대체하기
+  if (completedOnboarding === null) return null;
+
   return (
     <Provider store={store}>
       <NavigationContainer ref={navigationRef}>
@@ -33,10 +39,9 @@ const App: React.FC<void> = () => {
           screenOptions={{
             headerShown: false,
           }}
-          headerMode="screen"
-          initialRouteName="Main">
+          headerMode="screen">
+          {!completedOnboarding && groupScreens({ group: onBoardingScreens, Screen: Stack.Screen })}
           <Stack.Screen name="Main" component={MainScreen} />
-          {groupScreens({ group: onBoardingScreens, Screen: Stack.Screen })}
           <Stack.Screen name="Tutorial" component={TutorialScreen} />
           <Stack.Screen name="Folder" component={FolderScreen} />
           <Stack.Screen name="Sort" component={SortScreen} />
