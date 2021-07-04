@@ -2,22 +2,13 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RoundButton } from '@/shared/components';
-import { monitorScreenCapture } from '@/shared/utils/backgroundService';
-import requestPermissions from '@/shared/utils/requestPermissions';
-import storage from '@/shared/utils/handleAsyncStorage';
+import { requestPermissions } from '@/shared/utils/permissions';
 
 const PermissionScreen: React.FC = () => {
   const navigation = useNavigation();
-
   const onPressLikeButton = async () => {
     try {
-      const granted = await requestPermissions();
-      if (granted) {
-        await monitorScreenCapture();
-        await storage.setGrantedPermissions(true);
-      } else {
-        await storage.setGrantedPermissions(false);
-      }
+      await requestPermissions();
     } catch (error) {
       console.error(error);
     } finally {

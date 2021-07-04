@@ -12,13 +12,12 @@ import CreateFolderMessage from './CreateFolderMessage';
 import MainHeader from './MainHeader';
 
 import { useNavigation } from '@react-navigation/native';
-import { useCheckCompletedOnBoarding } from '@/shared/hooks';
+import { useCheckCompletedOnBoarding, usePermissions } from '@/shared/hooks';
+
+import { ExternalStorageDirectoryPath } from 'react-native-fs';
 
 const MainScreen: React.FC<Object> = () => {
-  const navigation = useNavigation();
   const { userFolders, setUserAllFolders } = useUserFolders();
-  const completedOnBoarding = useCheckCompletedOnBoarding();
-
   // 유저가 생성한 폴더 개수에 맞는 레이아웃 결정
   const layout = userFolderLayoutData[userFolders.length - 1];
 
@@ -30,13 +29,20 @@ const MainScreen: React.FC<Object> = () => {
     synchronizeStorageAndRedux();
   }, []);
 
+  const navigation = useNavigation();
+  const completedOnBoarding = useCheckCompletedOnBoarding();
   React.useEffect(() => {
     completedOnBoarding !== null && !completedOnBoarding && navigation.navigate('Guides');
   }, [completedOnBoarding]);
 
+  const navigateToFolderScreen = () => navigation.navigate('Folder');
+
+  const { grantedPermissions, requestPermssionsAgain } = usePermissions();
+  const onPressBtnGoFolder = grantedPermissions ? navigateToFolderScreen : requestPermssionsAgain;
+
   return (
     <Wrapper>
-      <MainHeader />
+      <MainHeader onPressBtnGoFolder={onPressBtnGoFolder} />
       {userFolders.length === 0 && <CreateFolderMessage />}
       <FolderList>
         {userFolders.map(({ id, folderName, borderColor }, index) => {
@@ -53,7 +59,9 @@ const MainScreen: React.FC<Object> = () => {
           );
         })}
       </FolderList>
-      <BasicFolderSvg style={{ position: 'absolute', bottom: 100, left: 50 }} />
+      <TouchableOpacity style={{ position: 'absolute', bottom: 100, left: 50 }}>
+        <BasicFolderSvg />
+      </TouchableOpacity>
     </Wrapper>
   );
 };

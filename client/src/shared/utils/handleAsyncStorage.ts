@@ -31,7 +31,6 @@ const storageKeys = {
   USER_FOLDERS: 'userFolders',
   COMPLETED_TUTORIAL: 'completedTutorial',
   COMPLETED_ONBOARDING: 'completedOnBoarding',
-  GRANTED_PERMISSIONS: 'grantedPermissions',
 };
 
 const storage = {
@@ -41,8 +40,6 @@ const storage = {
   setCompletedTutorial: storeDataCurry<boolean>(storageKeys.COMPLETED_TUTORIAL),
   getCompletedOnBoarding: getDataCurry<boolean>(storageKeys.COMPLETED_ONBOARDING),
   setCompletedOnBoarding: storeDataCurry<boolean>(storageKeys.COMPLETED_ONBOARDING),
-  getGrantedPermissions: getDataCurry<boolean>(storageKeys.GRANTED_PERMISSIONS),
-  setGrantedPermissions: storeDataCurry<boolean>(storageKeys.GRANTED_PERMISSIONS),
 };
 
 export default storage;

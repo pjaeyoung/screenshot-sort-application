@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import * as RNFS from 'react-native-fs';
 import {
   IPhoto,
   IPhotosState,
