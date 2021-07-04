@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from '@emotion/native';
-import { ToastAndroid, TouchableOpacity } from 'react-native';
+import { StyleSheet, ToastAndroid, TouchableOpacity } from 'react-native';
 
 // 키보드 상단에 색상지정 및 폴더명 추천 기능 추가를 위한 라이브러리
 import { KeyboardAccessoryView } from '@flyerhq/react-native-keyboard-accessory-view';
@@ -14,19 +14,35 @@ import renderScrollable from './renderScrollable';
 import EditableFolderSvg from './EditableFolderSvg';
 import { FolderSvgs } from '@/shared/components';
 
+import { RouteProp, useRoute } from '@react-navigation/native';
+import CreateFolderMessage from './CreateFolderMessage';
+import { BasicFolderSvg } from '@/shared/components';
+
+import FloatingButton from './FloatingButton';
+import { useNavigation } from '@react-navigation/native';
+import { ParamListType } from '@/shared/types';
+
 const FolderScreen: React.FC = () => {
-  const [editMode, setEditMode] = React.useState<boolean>(false);
+  const {
+    params: { isOnboarding },
+  } = useRoute<RouteProp<ParamListType, 'Folder'>>();
+
   const [folderName, setFolderName] = React.useState<string>('');
   const { userFolders } = useUserFolders();
-
-  const [borderColor, setBorderColor] = React.useState<string>('');
   const duplicatedFolderName = ({ folderName, id }: { folderName: string; id: string }) =>
     userFolders.find(userFolder => userFolder.id !== id && userFolder.folderName === folderName);
 
+  const [editMode, setEditMode] = React.useState<boolean>(false);
   const exitEditMode = () => {
     setFolderName('');
     setEditMode(prev => !prev);
   };
+
+  const [borderColor, setBorderColor] = React.useState<string>('');
+
+  const [firstCreateFolderOnboarding, setFirstCreateFolderOnboarding] = React.useState<boolean>(
+    () => !isOnboarding,
+  );
 
   const onSubmitEditing = async ({
     id,
@@ -47,6 +63,9 @@ const FolderScreen: React.FC = () => {
         } = await reduxFunc({ id, folderName, borderColor, filePath: `${FILEPATH}/${folderName}` });
 
         if (loading === LOADING.FAILED) throw new ReduxError(type);
+        if (isOnboarding && !firstCreateFolderOnboarding) {
+          setFirstCreateFolderOnboarding(true);
+        }
         exitEditMode();
       } catch (error) {
         if (error instanceof ReduxError) {
@@ -56,6 +75,11 @@ const FolderScreen: React.FC = () => {
       return;
     }
     exitEditMode();
+  };
+
+  const navigation = useNavigation();
+  const navigateToMainScreen = () => {
+    navigation.navigate('Main', { isOnboarding });
   };
 
   return (
@@ -76,6 +100,27 @@ const FolderScreen: React.FC = () => {
             folderLayout={folderLayout}
             FolderSvg={FolderSvgs[editableIndex]}
           />
+        ),
+        renderCreateFolderMessage: () => (
+          <>
+            {!editMode && userFolders.length === 0 && (
+              <CreateFolderMessage isOnboardng={isOnboarding} />
+            )}
+          </>
+        ),
+        renderBasicFolderSvg: () => (
+          <>{firstCreateFolderOnboarding && <BasicFolderSvg style={styles.basicFolderSvg} />}</>
+        ),
+        renderNavgateMainButton: () => (
+          <>
+            {!editMode && firstCreateFolderOnboarding && (
+              <FloatingButton
+                onPress={navigateToMainScreen}
+                positionStyle={styles.GoToMainButton}
+                iconName="check"
+              />
+            )}
+          </>
         ),
       })}>
       {editMode && (
@@ -150,3 +195,15 @@ const Division = styled.Text((props: { isVisible: boolean }) => ({
   fontSize: 18,
   color: '#B1B1B1',
 }));
+
+const styles = StyleSheet.create({
+  basicFolderSvg: {
+    position: 'absolute',
+    bottom: 150,
+    left: 0,
+  },
+  GoToMainButton: {
+    right: 40,
+    bottom: 150,
+  },
+});

@@ -13,16 +13,12 @@ import {
 } from 'react-native';
 import styled from '@emotion/native';
 
-import { useNavigation } from '@react-navigation/native';
-
-import { BasicFolderSvg } from '@/shared/components';
 import { LOADING, useUserFolders } from '@/redux/store';
 import { userFolderLayoutData } from '../constants';
 import { FolderSvgs } from '@/shared/components';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
 import { defaultBorderColors } from '@/shared/constants';
 
-import CreateFolderMessage from './CreateFolderMessage';
 import FloatingButton from './FloatingButton';
 import Alert, { IAlertButton } from './Alert';
 import ReduxError, { ReduxFuncReturnType } from '../utils/ReduxError';
@@ -34,6 +30,9 @@ interface renderScrollableProps {
     folderLayout: StyleProp<ViewStyle>;
     onSubmitEditing: (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void;
   }) => JSX.Element;
+  renderCreateFolderMessage: () => JSX.Element;
+  renderBasicFolderSvg: () => JSX.Element;
+  renderNavgateMainButton: () => JSX.Element;
   setBorderColor: React.Dispatch<React.SetStateAction<string>>;
   setFolderName: React.Dispatch<React.SetStateAction<string>>;
   setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
@@ -48,9 +47,11 @@ const renderScrollable =
     setFolderName,
     onSubmitEditing,
     renderEditableFolderSvg,
+    renderCreateFolderMessage,
+    renderBasicFolderSvg,
+    renderNavgateMainButton,
   }: renderScrollableProps) =>
   (panHandlers: GestureResponderHandlers) => {
-    const navigation = useNavigation();
     const [alertMessages, setAlertMessages] = React.useState<{
       title: string;
       body?: string;
@@ -155,21 +156,15 @@ const renderScrollable =
 
     return (
       <Wrapper>
-        {!editMode && userFolders.length === 0 && <CreateFolderMessage />}
+        {renderCreateFolderMessage()}
         <FloatingButton
           loading={editMode && loading === LOADING.PENDING}
           positionStyle={editMode ? styles.completeButton : styles.createButton}
           iconName={editMode ? 'check' : 'add'}
           onPress={editMode ? onCompleteEdit : onCreateMode}
         />
-        {!editMode && (
-          <FloatingButton
-            onPress={() => navigation.navigate('Main')}
-            positionStyle={styles.GoToMainButton}
-            iconName="check"
-          />
-        )}
-        <BasicFolderSvg style={styles.basicFolderSvg} />
+        {renderNavgateMainButton()}
+        {renderBasicFolderSvg()}
         <FolderSvgsScrollView
           ref={scrollRef}
           scrollEnabled={editMode}
@@ -221,15 +216,6 @@ const styles = StyleSheet.create({
   completeButton: {
     left: ScreenWidth * 0.5 - 57 * 0.5,
     top: 250,
-  },
-  GoToMainButton: {
-    right: 40,
-    bottom: 150,
-  },
-  basicFolderSvg: {
-    position: 'absolute',
-    bottom: 150,
-    left: 0,
   },
 });
 
