@@ -3,14 +3,15 @@ import { StyleSheet, View, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { RoundButton } from '@/shared/components';
-import storage from '@/shared/utils/handleAsyncStorage';
 
 const SmartCaptureGuideScreen: React.FC = () => {
   const navigation = useNavigation();
 
   const onPressLikeButton = async () => {
-    await storage.setCompletedOnBoarding(true);
-    navigation.navigate('Main');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Folder', params: { isOnboarding: true } }],
+    });
   };
 
   return (
