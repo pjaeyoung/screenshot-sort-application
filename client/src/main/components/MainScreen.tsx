@@ -1,6 +1,6 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
 import styled from '@emotion/native';
+import { TouchableOpacity } from 'react-native';
 
 import { userFolderLayoutData } from '../constants';
 import { useUserFolders } from '@/redux/store';
@@ -11,10 +11,10 @@ import { BasicFolderSvg } from '@/shared/components';
 import CreateFolderMessage from './CreateFolderMessage';
 import MainHeader from './MainHeader';
 
-import { useNavigation } from '@react-navigation/native';
-import { useCheckCompletedOnBoarding, usePermissions } from '@/shared/hooks';
-
-import { ExternalStorageDirectoryPath } from 'react-native-fs';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { usePermissions } from '@/shared/hooks';
+import CompleteOnboardingAlert from './CompleteOnboardingAlert';
+import { ParamListType } from '@/shared/types';
 
 const MainScreen: React.FC<Object> = () => {
   const { userFolders, setUserAllFolders } = useUserFolders();
@@ -29,16 +29,21 @@ const MainScreen: React.FC<Object> = () => {
     synchronizeStorageAndRedux();
   }, []);
 
-  const navigation = useNavigation();
-  const completedOnBoarding = useCheckCompletedOnBoarding();
-  React.useEffect(() => {
-    completedOnBoarding !== null && !completedOnBoarding && navigation.navigate('Guides');
-  }, [completedOnBoarding]);
-
-  const navigateToFolderScreen = () => navigation.navigate('Folder');
-
+  // 권한허용여부에 따라 폴더화면전환버튼 터치 이벤트와 기본폴더 터치 이벤트 결정
   const { grantedPermissions, requestPermssionsAgain } = usePermissions();
+  const navigation = useNavigation();
+  const navigateToFolderScreen = () => navigation.navigate('Folder', { isOnboarding: false });
   const onPressBtnGoFolder = grantedPermissions ? navigateToFolderScreen : requestPermssionsAgain;
+
+  // 온보딩완료여부에 따라 온보딩완료알림창 렌더링 결정
+  const { params } = useRoute<RouteProp<ParamListType, 'Main'>>();
+  const [completedOnboarding, setCompletedOnboarding] = React.useState<boolean>(
+    !params?.isOnboarding ?? true,
+  );
+  const onCompleteOnboarding = async () => {
+    await storage.setCompletedOnBoarding(true);
+    setCompletedOnboarding(true);
+  };
 
   return (
     <Wrapper>
@@ -62,6 +67,10 @@ const MainScreen: React.FC<Object> = () => {
       <TouchableOpacity style={{ position: 'absolute', bottom: 100, left: 50 }}>
         <BasicFolderSvg />
       </TouchableOpacity>
+      <CompleteOnboardingAlert
+        isVisible={!completedOnboarding}
+        onCompleteOnboarding={onCompleteOnboarding}
+      />
     </Wrapper>
   );
 };
