@@ -8,7 +8,7 @@ function useCheckCompletedOnBoarding() {
   useEffect(() => {
     const checkCompletedOnBoarding = async () => {
       const _completedOnBoarding = await storage.getCompletedOnBoarding();
-      setCompletedOnBoarding(_completedOnBoarding ? true : false);
+      setCompletedOnBoarding(_completedOnBoarding ?? false);
     };
 
     checkCompletedOnBoarding();
