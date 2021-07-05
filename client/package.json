@@ -1,5 +1,5 @@
 {
-  "name": "ScCap",
+  "name": "SCCAP",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -21,9 +21,6 @@
     "@emotion/native": "^11.0.0",
     "@emotion/react": "^11.1.5",
     "@flyerhq/react-native-keyboard-accessory-view": "^2.1.1",
-    "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
-    "@fortawesome/react-native-fontawesome": "^0.2.6",
     "@react-native-async-storage/async-storage": "^1.15.4",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/native": "^5.9.4",
@@ -33,7 +30,6 @@
     "prop-types": "^15.7.2",
     "react": "17.0.1",
     "react-native": "0.64.0",
-    "react-native-android-permissions": "https://github.com/jeanDeluge/react-native-android-permissions.git",
     "react-native-background-actions": "^2.6.0",
     "react-native-detector": "https://github.com/pjaeyoung/react-native-detector.git",
     "react-native-draw-overlay": "^1.0.1",

@@ -3,19 +3,27 @@ import { StyleSheet, View, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { RoundButton } from '@/shared/components';
+import { usePermissions } from '@/shared/hooks';
 
 const SmartCaptureGuideScreen: React.FC = () => {
   const navigation = useNavigation();
-
+  const { requestPermssionsAgain } = usePermissions();
   const onPressLikeButton = async () => {
-    navigation.navigate('OverlayPermissionGuide');
+    requestPermssionsAgain()
+      .catch(console.error)
+      .finally(() =>
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Folder', params: { isOnboarding: true } }],
+        }),
+      );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.message}>스크린샷은 앞으로{'\n'}스캡에 맡겨주세요!🤝</Text>
+      <Text style={styles.message}>스캡은 다른 앱 위에{'\n'}표시되는 앱이에요!📲</Text>
       <View style={styles.imageWrapper}>
-        <Image source={require('../assets/images/onBoarding/smartcapture.png')} />
+        <Image source={require('../assets/images/onBoarding/overlay-permission.png')} />
       </View>
       <View style={styles.buttonWrapper}>
         <RoundButton

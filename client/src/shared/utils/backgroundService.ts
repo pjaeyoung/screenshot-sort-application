@@ -1,5 +1,5 @@
 import BackgroundService from 'react-native-background-actions';
-import { addScreenshotListener } from 'react-native-detector';
+import { addScreenshotListener, removeScreenshotListener } from 'react-native-detector';
 import * as RNFS from 'react-native-fs';
 import storage from './handleAsyncStorage';
 
@@ -50,6 +50,7 @@ const options = {
 
 // 스크린샷 감지 서비스 실행
 function monitorScreenCapture() {
+  if (BackgroundService.isRunning()) return;
   return BackgroundService.start(registerScreenCaptureEvent, options);
 }
 
