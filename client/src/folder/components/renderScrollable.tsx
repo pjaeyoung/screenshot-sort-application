@@ -140,8 +140,9 @@ const renderScrollable =
             return (
               <React.Fragment key={id}>
                 <TouchableOpacity
+                  activeOpacity={editMode ? 1 : 0.2}
                   style={[userFolderLayoutData[index].folderLayout]}
-                  onPress={onEditMode(index)}>
+                  onPress={editMode ? undefined : onEditMode(index)}>
                   <FolderSvg borderColor={borderColor}>
                     <FolderName top={index === 1 ? '60%' : '45%'}>{folderName}</FolderName>
                   </FolderSvg>
