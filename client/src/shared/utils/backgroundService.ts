@@ -38,9 +38,9 @@ const registerScreenCaptureEvent = () => {
 };
 
 const options = {
-  taskName: 'ScCap Screenshot Monitoring',
+  taskName: 'SCCAP Screenshot Monitoring',
   taskTitle: 'Screenshot Monitoring',
-  taskDesc: '화면을 캡쳐하면 ScCap이 실행될 수 있도록 모니터링 중입니다',
+  taskDesc: '화면을 캡쳐하면 SCCAP이 실행될 수 있도록 모니터링 중입니다',
   taskIcon: {
     name: 'ic_launcher',
     type: 'mipmap',
