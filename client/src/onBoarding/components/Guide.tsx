@@ -25,7 +25,9 @@ const Guide: React.FC = ({ Pagination, text, image, textStyle, boldTextStyle }) 
         {formatText(text)}
       </Text>
       <View style={styles.paginationContainer}>{Pagination}</View>
-      <Image style={styles.image} source={image} />
+      <View style={styles.imageContainer}>
+        <Image style={styles.image} source={image} />
+      </View>
     </View>
   );
 };
@@ -49,8 +51,14 @@ const styles = StyleSheet.create({
   paginationContainer: {
     height: 50,
   },
+  imageContainer: {
+    height: 500,
+    width: 250,
+    borderRadius: 50,
+    overflow: 'hidden',
+  },
   image: {
-    height: '70%',
-    borderRadius: 35,
+    width: '100%',
+    height: '100%',
   },
 });

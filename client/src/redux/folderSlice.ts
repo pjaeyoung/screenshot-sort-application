@@ -71,6 +71,18 @@ const update = createAsyncThunk('update', async (updatedUserFolder: IStoredFolde
   }
 });
 
+const reset = createAsyncThunk('reset', async (_, thunkAPI) => {
+  const { entries, loading } = thunkAPI.getState().folders as IUserFolderState;
+  try {
+    await Promise.all(entries.map(({ folderName }) => FS.deleteFolder(folderName)));
+    await storage.setUserFolders([]);
+    return { entries: [], loading };
+  } catch (error) {
+    console.error(error);
+    return thunkAPI.rejectWithValue({ entries, loading: LOADING.FAILED });
+  }
+});
+
 const initialState: IUserFolderState = {
   entries: [],
   loading: LOADING.IDLE,
@@ -110,6 +122,9 @@ const folderSlice = createSlice({
     [`${update.pending}`]: handlePending,
     [`${update.rejected}`]: handleFailed,
     [`${update.fulfilled}`]: handleSucceeded,
+    [`${reset.pending}`]: handlePending,
+    [`${reset.rejected}`]: handleFailed,
+    [`${reset.fulfilled}`]: handleSucceeded,
   },
 });
 
@@ -136,6 +151,10 @@ export const useUserFolders = () => {
     return dispatch(update(payload));
   };
 
+  const resetUserAllFolders = () => {
+    return dispatch(reset());
+  };
+
   const getUserAllFolders = () => userFolders;
   const getUserFolderById = (id: string) => userFolders.find(folder => folder.id === id);
 
@@ -148,5 +167,6 @@ export const useUserFolders = () => {
     setUserAllFolders,
     removeUserFolder,
     editUserFolder,
+    resetUserAllFolders,
   };
 };
