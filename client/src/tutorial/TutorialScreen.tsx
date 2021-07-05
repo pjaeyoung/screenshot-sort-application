@@ -28,8 +28,7 @@ const TutorialScreen: React.FC = () => {
       <Overlay
         onBackdropPress={incrementScreenNumber}
         isVisible={overlayVisible}
-        overlayStyle={styles.overlayStyle}
-        backdropStyle={styles.backdropStyle}>
+        overlayStyle={styles.overlayStyle}>
         <SpeechBubble {...speechBubbles[screenNumber]} />
       </Overlay>
       <SortScreen />
@@ -45,5 +44,4 @@ const Wrapper = styled.View({
 
 const styles = StyleSheet.create({
   overlayStyle: { backgroundColor: 'transparent', borderWidth: 0, elevation: 0 },
-  backdropStyle: { backgroundColor: 'transparent' },
 });
