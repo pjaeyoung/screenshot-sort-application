@@ -8,7 +8,12 @@ import { navigationRef } from '@/shared/utils/RootNavigation';
 import { MainScreen } from '@/main/components';
 import { SortScreen } from '@/sort/components';
 import CategoryScreen from '@/category';
-import { GuidesScreen, PermissionScreen, SmartCaptureGuideScreen } from '@/onBoarding';
+import {
+  GuidesScreen,
+  PermissionScreen,
+  SmartCaptureGuideScreen,
+  OverlayPermissionGuideScreen,
+} from '@/onBoarding';
 import PhotoScreen from '@/photo';
 import TutorialScreen from '@/tutorial';
 import { FolderScreen } from '@/folder/components';
@@ -22,6 +27,7 @@ const onBoardingScreens: IScreenGroup = {
   Guides: GuidesScreen,
   Permissions: PermissionScreen,
   SmartCaptureGuide: SmartCaptureGuideScreen,
+  OverlayPermissionGuide: OverlayPermissionGuideScreen,
 };
 
 const Stack = createStackNavigator();

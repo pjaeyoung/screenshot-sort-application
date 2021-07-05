@@ -49,7 +49,7 @@ const usePermissions = (props?: UsePermissionsPropsType) => {
 
   // 사용자가 최초 권한 허용 거부 후 재요청
   const requestPermssionsAgain = () => {
-    openSettings();
+    return openSettings();
   };
 
   return { grantedPermissions, requestPermssionsAgain };
