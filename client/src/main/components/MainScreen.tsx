@@ -32,7 +32,16 @@ const MainScreen: React.FC<Object> = () => {
   // 권한허용여부에 따라 폴더화면전환버튼 터치 이벤트와 기본폴더 터치 이벤트 결정
   const { grantedPermissions, requestPermssionsAgain } = usePermissions();
   const navigation = useNavigation();
-  const navigateToFolderScreen = () => navigation.navigate('Folder', { isOnboarding: false });
+  const navigateToFolderScreen = () =>
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'Folder',
+          params: { isOnboarding: false },
+        },
+      ],
+    });
   const onPressBtnGoFolder = grantedPermissions ? navigateToFolderScreen : requestPermssionsAgain;
 
   // 온보딩완료여부에 따라 온보딩완료알림창 렌더링 결정

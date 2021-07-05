@@ -21,11 +21,32 @@ import { BasicFolderSvg } from '@/shared/components';
 import FloatingButton from './FloatingButton';
 import { useNavigation } from '@react-navigation/native';
 import { ParamListType } from '@/shared/types';
+import { usePermissions } from '@/shared/hooks';
 
 const FolderScreen: React.FC = () => {
   const {
     params: { isOnboarding },
   } = useRoute<RouteProp<ParamListType, 'Folder'>>();
+  const [firstCreateFolderOnboarding, setFirstCreateFolderOnboarding] = React.useState<boolean>(
+    () => !isOnboarding,
+  );
+
+  const navigation = useNavigation();
+  const navigateToMainScreen = () => {
+    navigation.navigate('Main', { isOnboarding });
+  };
+  const { grantedPermissions, requestPermssionsAgain } = usePermissions({
+    onRejected: navigateToMainScreen,
+  });
+
+  const checkGrantedPermissions = () => {
+    if (!grantedPermissions) {
+      requestPermssionsAgain();
+      return false;
+    } else {
+      return true;
+    }
+  };
 
   const [folderName, setFolderName] = React.useState<string>('');
   const { userFolders } = useUserFolders();
@@ -39,10 +60,6 @@ const FolderScreen: React.FC = () => {
   };
 
   const [borderColor, setBorderColor] = React.useState<string>('');
-
-  const [firstCreateFolderOnboarding, setFirstCreateFolderOnboarding] = React.useState<boolean>(
-    () => !isOnboarding,
-  );
 
   const onSubmitEditing = async ({
     id,
@@ -77,11 +94,6 @@ const FolderScreen: React.FC = () => {
     exitEditMode();
   };
 
-  const navigation = useNavigation();
-  const navigateToMainScreen = () => {
-    navigation.navigate('Main', { isOnboarding });
-  };
-
   return (
     <KeyboardAccessoryView
       renderScrollable={renderScrollable({
@@ -90,6 +102,7 @@ const FolderScreen: React.FC = () => {
         setEditMode,
         setFolderName,
         onSubmitEditing,
+        checkGrantedPermissions,
         renderEditableFolderSvg: ({ editableIndex, folderLayout, onSubmitEditing }) => (
           <EditableFolderSvg
             editableIndex={editableIndex}

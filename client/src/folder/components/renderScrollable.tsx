@@ -22,9 +22,13 @@ import { defaultBorderColors } from '@/shared/constants';
 import FloatingButton from './FloatingButton';
 import Alert, { IAlertButton } from './Alert';
 import ReduxError, { ReduxFuncReturnType } from '../utils/ReduxError';
+import { usePermissions } from '@/shared/hooks';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { ParamListType } from '@/shared/types';
 
 interface renderScrollableProps {
   editMode: boolean;
+  checkGrantedPermissions: () => boolean;
   renderEditableFolderSvg: (args: {
     editableIndex: number;
     folderLayout: StyleProp<ViewStyle>;
@@ -45,6 +49,7 @@ const renderScrollable =
     setEditMode,
     setBorderColor,
     setFolderName,
+    checkGrantedPermissions,
     onSubmitEditing,
     renderEditableFolderSvg,
     renderCreateFolderMessage,
@@ -66,6 +71,8 @@ const renderScrollable =
     const [editableIndex, setEditableIndex] = React.useState<number>(-1);
 
     const onCreateMode = () => {
+      if (!checkGrantedPermissions()) return;
+
       if (userFolders.length === 7) {
         setAlertMessages({
           title: '분류 폴더는 7개까지 생성 가능합니다.',

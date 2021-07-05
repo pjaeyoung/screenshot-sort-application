@@ -4,7 +4,11 @@ import { openSettings } from 'react-native-permissions';
 import { getPermissionsStatus } from '../utils/permissions';
 import { monitorScreenCapture } from '../utils/backgroundService';
 
-const usePermissions = () => {
+type UsePermissionsPropsType = {
+  onRejected?: Function;
+};
+
+const usePermissions = (props?: UsePermissionsPropsType) => {
   const [grantedPermissions, setGrantedPermissions] = React.useState<boolean>(false);
 
   const checkPermissionsStatus = async () => {
@@ -14,6 +18,7 @@ const usePermissions = () => {
       if (granted) {
         await monitorScreenCapture();
       }
+      return granted;
     } catch (error) {
       console.error(error);
     }
@@ -22,7 +27,12 @@ const usePermissions = () => {
   // 앱 권한설정화면을 보여주는 openSettings에서 사용자가 어떤 선택을 했는지 값을 받아올 수 없기 때문에
   // 앱 권한설정화면을 끄고 스캡앱을 실행할 때 권한허용여부를 받아와 처리함
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (nextAppState === 'active') checkPermissionsStatus();
+    if (nextAppState === 'active')
+      checkPermissionsStatus().then(granted => {
+        if (!granted) {
+          props?.onRejected && props.onRejected();
+        }
+      });
   };
 
   React.useEffect(() => {
