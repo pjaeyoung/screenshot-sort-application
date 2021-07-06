@@ -3,6 +3,7 @@ import { AppStateStatus, AppState } from 'react-native';
 import { openSettings } from 'react-native-permissions';
 import { getPermissionsStatus } from '../utils/permissions';
 import { monitorScreenCapture } from '../utils/backgroundService';
+import storage from '../utils/handleAsyncStorage';
 
 type UsePermissionsPropsType = {
   onRejected?: Function;
@@ -15,7 +16,8 @@ const usePermissions = (props?: UsePermissionsPropsType) => {
     try {
       const granted = await getPermissionsStatus();
       setGrantedPermissions(granted);
-      if (granted) {
+      const isRunningMonitorScreenshot = await storage.getMonitorScreenshot();
+      if (granted && isRunningMonitorScreenshot) {
         await monitorScreenCapture();
       }
       return granted;

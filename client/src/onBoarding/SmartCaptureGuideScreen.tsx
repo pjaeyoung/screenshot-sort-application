@@ -3,12 +3,14 @@ import { StyleSheet, View, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { RoundButton } from '@/shared/components';
+import { useCheckCompletedOnBoarding } from '@/shared/hooks';
 
 const SmartCaptureGuideScreen: React.FC = () => {
   const navigation = useNavigation();
+  const completedOnboarding = useCheckCompletedOnBoarding();
 
   const onPressLikeButton = async () => {
-    navigation.navigate('OverlayPermissionGuide');
+    navigation.navigate(completedOnboarding ? 'Setting' : 'OverlayPermissionGuide');
   };
 
   return (

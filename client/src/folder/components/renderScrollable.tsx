@@ -19,12 +19,11 @@ import { FolderSvgs } from '@/shared/components';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
 import { defaultBorderColors } from '@/shared/constants';
 
+import { Alert } from '@/shared/components';
+import { IAlertButton } from '@/shared/types';
+
 import FloatingButton from './FloatingButton';
-import Alert, { IAlertButton } from './Alert';
 import ReduxError, { ReduxFuncReturnType } from '../utils/ReduxError';
-import { usePermissions } from '@/shared/hooks';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { ParamListType } from '@/shared/types';
 
 interface renderScrollableProps {
   editMode: boolean;

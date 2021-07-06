@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/native';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 
 import { userFolderLayoutData } from '../constants';
 import { useUserFolders } from '@/redux/store';
@@ -32,6 +32,9 @@ const MainScreen: React.FC<Object> = () => {
   // 권한허용여부에 따라 폴더화면전환버튼 터치 이벤트와 기본폴더 터치 이벤트 결정
   const { grantedPermissions, requestPermssionsAgain } = usePermissions();
   const navigation = useNavigation();
+  const navigateToCategory = (folderId: string) => () => {
+    navigation.navigate('Category', { folderId });
+  };
   const navigateToFolderScreen = () =>
     navigation.reset({
       index: 0,
@@ -65,7 +68,7 @@ const MainScreen: React.FC<Object> = () => {
             <TouchableOpacity
               key={id}
               style={[{ position: 'absolute' }, layout[index]]}
-              onPress={() => navigation.navigate('Category', { folderId: id })}>
+              onPress={navigateToCategory(id)}>
               <FolderSvg key={id} borderColor={borderColor}>
                 <FolderName top={index === 1 ? '58%' : '45%'}>{folderName}</FolderName>
               </FolderSvg>
@@ -73,7 +76,9 @@ const MainScreen: React.FC<Object> = () => {
           );
         })}
       </FolderList>
-      <TouchableOpacity style={{ position: 'absolute', bottom: 100, left: 50 }}>
+      <TouchableOpacity
+        style={styles.basicFolderContainer}
+        onPress={navigateToCategory('basicFolder')}>
         <BasicFolderSvg />
       </TouchableOpacity>
       <CompleteOnboardingAlert
@@ -85,6 +90,14 @@ const MainScreen: React.FC<Object> = () => {
 };
 
 export default MainScreen;
+
+const styles = StyleSheet.create({
+  basicFolderContainer: {
+    position: 'absolute',
+    bottom: 100,
+    left: 50,
+  },
+});
 
 const Wrapper = styled.View({
   flex: 1,

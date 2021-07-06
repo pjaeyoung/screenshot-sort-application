@@ -4,7 +4,6 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 const Header: React.FC = ({ previous, scene, navigation, Right }) => {
   const { descriptor } = scene;
   const { title, headerShown, headerTintColor } = descriptor.options;
-  console.log('options: ', descriptor.options);
 
   return (
     <View

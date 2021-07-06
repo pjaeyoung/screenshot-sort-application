@@ -21,6 +21,12 @@ import com.rnfs.RNFSPackage;
 import com.facebook.react.bridge.JSIModulePackage; 
 import com.swmansion.reanimated.ReanimatedJSIModulePackage; 
 
+// react-native-in-app-review 모듈 사용
+import com.ibits.react_native_in_app_review.AppReviewPackage;
+
+// react-native-mail 모듈 사용
+import com.chirag.RNMail.*;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =

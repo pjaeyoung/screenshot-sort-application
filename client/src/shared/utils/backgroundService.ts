@@ -1,5 +1,5 @@
 import BackgroundService from 'react-native-background-actions';
-import { addScreenshotListener, removeScreenshotListener } from 'react-native-detector';
+import { addScreenshotListener } from 'react-native-detector';
 import * as RNFS from 'react-native-fs';
 import storage from './handleAsyncStorage';
 
@@ -38,20 +38,31 @@ const registerScreenCaptureEvent = () => {
 };
 
 const options = {
-  taskName: 'ScCap Screenshot Monitoring',
+  taskName: 'SCCAP Screenshot Monitoring',
   taskTitle: 'Screenshot Monitoring',
-  taskDesc: '화면을 캡쳐하면 ScCap이 실행될 수 있도록 모니터링 중입니다',
+  taskDesc: '화면을 캡쳐하면 SCCAP이 실행될 수 있도록 모니터링 중입니다',
   taskIcon: {
     name: 'ic_launcher',
     type: 'mipmap',
   },
-  color: '#ff00ff',
+  color: '#2699FB',
 };
 
 // 스크린샷 감지 서비스 실행
-function monitorScreenCapture() {
-  if (BackgroundService.isRunning()) return;
-  return BackgroundService.start(registerScreenCaptureEvent, options);
+
+function isRunningMonitorScreenCapture() {
+  return BackgroundService.isRunning();
 }
 
-export { monitorScreenCapture };
+async function monitorScreenCapture() {
+  if (BackgroundService.isRunning()) return;
+  await BackgroundService.start(registerScreenCaptureEvent, options);
+}
+
+async function stopMonitorScreenCapture() {
+  if (BackgroundService.isRunning()) {
+    await BackgroundService.stop();
+  }
+}
+
+export { monitorScreenCapture, stopMonitorScreenCapture, isRunningMonitorScreenCapture };

@@ -1,6 +1,7 @@
 import * as RNFS from 'react-native-fs';
 
 export const FILEPATH = `${RNFS.ExternalStorageDirectoryPath}/SCCAP`;
+export const BASICFOLDER_FILEPATH = `${RNFS.ExternalStorageDirectoryPath}/DCIM/Screenshots`;
 
 export const extractFileNameFrom = (path: string) => {
   return path.split('/').slice(-1)[0];
