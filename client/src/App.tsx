@@ -16,6 +16,7 @@ import {
 } from '@/onBoarding';
 import PhotoScreen from '@/photo';
 import TutorialScreen from '@/tutorial';
+import SettingScreen from '@/setting';
 import { FolderScreen } from '@/folder/components';
 import store from '@/redux/store';
 import { defaultOptionsWithHeader } from '@/shared/constants';
@@ -45,8 +46,8 @@ const App: React.FC<void> = () => {
           screenOptions={{
             headerShown: false,
           }}
-          headerMode="screen">
-          {!completedOnboarding && groupScreens({ group: onBoardingScreens, Screen: Stack.Screen })}
+          headerMode="screen"
+          initialRouteName={completedOnboarding ? 'Main' : 'Guides'}>
           <Stack.Screen name="Main" component={MainScreen} />
           <Stack.Screen name="Tutorial" component={TutorialScreen} />
           <Stack.Screen name="Folder" component={FolderScreen} />
@@ -66,6 +67,16 @@ const App: React.FC<void> = () => {
               ...defaultOptionsWithHeader,
             }}
           />
+          <Stack.Screen
+            name="Setting"
+            component={SettingScreen}
+            options={{
+              headerShown: true,
+              headerTitle: '',
+              headerStyle: { backgroundColor: '#F7F7F7' },
+            }}
+          />
+          {groupScreens({ group: onBoardingScreens, Screen: Stack.Screen })}
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

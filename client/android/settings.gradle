@@ -1,4 +1,8 @@
 rootProject.name = 'SCCAP'
+include ':RNMail', ':app'
+project(':RNMail').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-mail/android')
+include ':react-native-in-app-review'
+project(':react-native-in-app-review').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-in-app-review/android')
 include ':react-native-draw-overlay'
 project(':react-native-draw-overlay').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-draw-overlay/android')
 include ':react-native-share'
@@ -13,3 +17,4 @@ include ':react-native-fs'
 project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android')
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
+

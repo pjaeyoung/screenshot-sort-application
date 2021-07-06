@@ -1,48 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ImageBackground, TouchableWithoutFeedback, Alert } from 'react-native';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-import { unwrapResult } from '@reduxjs/toolkit';
+import { StyleSheet, View, ImageBackground, TouchableWithoutFeedback } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-import { TrashButton } from '@/shared/components';
-import { useAppDispatch } from '@/redux/hooks';
-import { usePhotosInFolder, removePhotoInStorage } from '@/redux/photosSlice';
+import { TrashButton, Alert } from '@/shared/components';
 import { useUserFolders } from '@/redux/folderSlice';
 
+import * as RNFS from '@/shared/utils/fsFunctions';
+
 const Photo: React.FC = () => {
-  const route = useRoute();
+  const {
+    params: { id, source },
+  } = useRoute();
   const navigation = useNavigation();
-  const dispatch = useAppDispatch();
-  const { id } = route.params; //redux store에 데이터 저장하고 가져오는 방식으로 교체할 예정
-  //const [isControlMode, setIsControlMode] = useState<boolean>(true);
-  const { getUserFolderById } = useUserFolders();
-  const { getPhotoById } = usePhotosInFolder();
-  const { folderId, source } = getPhotoById(id) || {};
-  const { folderName } = getUserFolderById(folderId) || {};
 
-  // const onPressToggleControlMode = () => {
-  //   //setIsControlMode(!isControlMode);
-  // };
-
-  const onPressTrashButton = async () => {
-    Alert.alert('사진 삭제', '사진을 정말 삭제하시겠습니까?', [
-      {
-        text: '취소',
-        style: 'cancel',
-      },
-      {
-        text: '확인',
-        onPress: async () => {
-          try {
-            const resultAction = await dispatch(removePhotoInStorage({ folderName, photoId: id }));
-            unwrapResult(resultAction);
-            navigation.goBack();
-          } catch (error) {
-            console.error(error.message);
-          }
-        },
-      },
-    ]);
+  const [isControlMode, setIsControlMode] = useState<boolean>(true);
+  const onPressToggleControlMode = () => {
+    setIsControlMode(!isControlMode);
   };
+
+  const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
+  const onDismissAlert = () => setVisibleAlert(false);
+  const onPressTrashButton = async () => {
+    setVisibleAlert(true);
+  };
+
+  const { getUserFolderById } = useUserFolders();
+  const folderName = getUserFolderById(id)?.folderName || '기본';
 
   useEffect(function setInitialScreenOptions() {
     navigation.setOptions({
@@ -51,24 +34,46 @@ const Photo: React.FC = () => {
     });
   }, []);
 
-  // useEffect(
-  //   function toggleControlMode() {
-  //     navigation.setOptions({
-  //       headerShown: isControlMode,
-  //     });
-  //   },
-  //   [isControlMode],
-  // );
+  useEffect(
+    function toggleControlMode() {
+      navigation.setOptions({
+        headerShown: isControlMode,
+      });
+    },
+    [isControlMode],
+  );
+
+  const alertButtons = [
+    {
+      name: '취소',
+      onPress: onDismissAlert,
+    },
+    {
+      name: '삭제',
+      onPress: async () => {
+        try {
+          await RNFS.deleteFile(source);
+          navigation.goBack();
+        } catch (error) {
+          console.error(error.message);
+        }
+      },
+    },
+  ];
+
+  const uri = `file://${source}`;
 
   return (
-    <TouchableWithoutFeedback
-      style={styles.container}
-      // onPress={onPressToggleControlMode}
-    >
-      <ImageBackground style={styles.Image} source={{ uri: `data:image/*;base64,${source}` }}>
+    <TouchableWithoutFeedback style={styles.container} onPress={onPressToggleControlMode}>
+      <ImageBackground style={styles.Image} source={{ uri }}>
+        <Alert
+          title="사진을 삭제하시겠습니까?"
+          body={id === 'basicFolder' ? '(원본이 삭제됩니다.)' : ''}
+          isVisible={visibleAlert}
+          buttons={alertButtons}
+        />
         <View style={styles.Bottom}>
-          {/* {isControlMode && <TrashButton onPress={onPressTrashButton} />} */}
-          <TrashButton onPress={onPressTrashButton} />
+          {isControlMode && <TrashButton onPress={onPressTrashButton} />}
         </View>
       </ImageBackground>
     </TouchableWithoutFeedback>

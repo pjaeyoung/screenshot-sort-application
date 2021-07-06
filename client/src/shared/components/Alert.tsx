@@ -1,12 +1,8 @@
 import * as React from 'react';
-import { GestureResponderEvent, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import styled from '@emotion/native';
 import { Overlay } from 'react-native-elements';
-
-export interface IAlertButton {
-  name: string;
-  onPress: (event: GestureResponderEvent) => void;
-}
+import { IAlertButton } from '../types';
 
 interface IAlertProps {
   title: string;

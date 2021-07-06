@@ -1,26 +1,45 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, FlatList, ListRenderItem, StyleSheet } from 'react-native';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
 
 import PhotoItem from './PhotoItem';
 import { IPhoto } from '@/shared/types';
-import { useAppDispatch } from '@/redux/hooks';
 import { ErrorView } from '@/shared/components';
 import { useUserFolders } from '@/redux/folderSlice';
-import { getPhotosInStorage, usePhotosInFolder } from '@/redux/photosSlice';
+
+import * as RNFS from '@/shared/utils/fsFunctions';
+
+const renderItem: ListRenderItem<IPhoto> = ({ item }) => <PhotoItem {...item} />;
+const keyExtractor = (_, index) => `${index}`;
 
 const PhotoList: React.FC = () => {
   const navigation = useNavigation();
-  const dispatch = useAppDispatch();
-  const { params } = useRoute();
-  const { folderId } = params;
   const { getUserFolderById } = useUserFolders();
-  const { getAllPhotosInFolder, getPhotosError } = usePhotosInFolder();
-  const { folderName } = getUserFolderById(folderId);
-  const photosData = getAllPhotosInFolder();
-  const error = getPhotosError();
+  const {
+    params: { folderId },
+  } = useRoute();
 
-  const renderItem: ListRenderItem<IPhoto> = ({ item }) => <PhotoItem {...item} />;
+  const [photosData, setPhotosData] = useState([]);
+  const [error, setError] = useState<string>('');
+
+  let folderName = folderId === 'basicFolder' ? '기본' : getUserFolderById(folderId)?.folderName;
+
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    async function setPhotosDataAsync() {
+      const images = await RNFS.readFolder(
+        folderId === 'basicFolder' ? RNFS.BASICFOLDER_FILEPATH : `${RNFS.FILEPATH}/${folderName}`,
+      );
+      if (images.length === 0) {
+        setError('정리된 사진이 아직 없습니다 :( \n 스캡으로 스크린샷을 즉시 분류해보세요!');
+        return;
+      }
+
+      isFocused && setPhotosData(images.map(aImage => ({ id: folderId, source: aImage.path })));
+    }
+
+    setPhotosDataAsync();
+  }, [isFocused]);
 
   useEffect(
     function setInitialScreenOptions() {
@@ -31,17 +50,6 @@ const PhotoList: React.FC = () => {
     [folderId],
   );
 
-  useFocusEffect(
-    useCallback(
-      function loadPhotosData() {
-        if (folderId) {
-          dispatch(getPhotosInStorage(folderId));
-        }
-      },
-      [folderId],
-    ),
-  );
-
   if (error || photosData?.length === 0) {
     return <ErrorView message={error} />;
   }
@@ -50,10 +58,9 @@ const PhotoList: React.FC = () => {
     <View style={styles.container}>
       {photosData && (
         <FlatList
-          style={styles.photos}
           data={photosData}
           renderItem={renderItem}
-          keyExtractor={item => (item as IPhoto).id.toString()}
+          keyExtractor={keyExtractor}
           numColumns={3}
         />
       )}
@@ -65,7 +72,6 @@ export default PhotoList;
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    padding: 20,
   },
-  photos: {},
 });

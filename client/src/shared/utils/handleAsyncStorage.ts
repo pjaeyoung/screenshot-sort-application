@@ -31,6 +31,7 @@ const storageKeys = {
   USER_FOLDERS: 'userFolders',
   COMPLETED_TUTORIAL: 'completedTutorial',
   COMPLETED_ONBOARDING: 'completedOnBoarding',
+  MONITOR_SCREENSHOT: 'monitorScreenshot',
 };
 
 const storage = {
@@ -40,6 +41,8 @@ const storage = {
   setCompletedTutorial: storeDataCurry<boolean>(storageKeys.COMPLETED_TUTORIAL),
   getCompletedOnBoarding: getDataCurry<boolean>(storageKeys.COMPLETED_ONBOARDING),
   setCompletedOnBoarding: storeDataCurry<boolean>(storageKeys.COMPLETED_ONBOARDING),
+  getMonitorScreenshot: getDataCurry<boolean>(storageKeys.MONITOR_SCREENSHOT),
+  setMonitorScreenshot: storeDataCurry<boolean>(storageKeys.MONITOR_SCREENSHOT),
 };
 
 export default storage;

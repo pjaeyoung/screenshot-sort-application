@@ -1,5 +1,6 @@
 import { requestMultiple, PERMISSIONS, RESULTS, checkMultiple } from 'react-native-permissions';
 import { monitorScreenCapture } from './backgroundService';
+import storage from './handleAsyncStorage';
 
 const permissions = [
   PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
@@ -16,14 +17,13 @@ function grantedAllPermissions(
 }
 
 // 폴더 접근권한 최초 요청
-export function requestPermissions(): Promise<void> {
-  return requestMultiple(permissions)
-    .then(grantedAllPermissions)
-    .then(granted => {
-      if (granted) {
-        return monitorScreenCapture();
-      }
-    });
+export async function requestPermissions(): Promise<void> {
+  const results = await requestMultiple(permissions);
+  const granted = await grantedAllPermissions(results);
+  if (granted) {
+    monitorScreenCapture();
+  }
+  await storage.setMonitorScreenshot(granted);
 }
 
 // 폴더 접근권한 상태값 반환
