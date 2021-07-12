@@ -3,8 +3,6 @@ include ':RNMail', ':app'
 project(':RNMail').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-mail/android')
 include ':react-native-in-app-review'
 project(':react-native-in-app-review').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-in-app-review/android')
-include ':react-native-draw-overlay'
-project(':react-native-draw-overlay').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-draw-overlay/android')
 include ':react-native-share'
 project(':react-native-share').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-share/android')
 include ':react-native-vector-icons'
