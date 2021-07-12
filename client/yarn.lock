@@ -6967,11 +6967,6 @@ react-native-codegen@^0.0.6:
   version "0.1.2"
   resolved "https://github.com/pjaeyoung/react-native-detector.git#c3247f008c89f8bab33dd69648126b724e72f4e9"
 
-react-native-draw-overlay@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-draw-overlay/-/react-native-draw-overlay-1.0.1.tgz#718d716c820f36726841a05410c2ea5df96ba2e0"
-  integrity sha512-6hMIhl43+Rh2Tjxqy7BptmGcTshnqSnQSUwkdIEheEgIV+VHtDWGzRinZrPziknzJSsbOcQgRaQ5BUTH0tQlEQ==
-
 react-native-drax@^0.8.0:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/react-native-drax/-/react-native-drax-0.8.0.tgz#249974c45cd2a15d9b68962770ae78e8005e3eac"
