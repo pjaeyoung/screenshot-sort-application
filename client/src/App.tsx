@@ -1,12 +1,12 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { Provider } from 'react-redux';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { navigationRef } from '@/shared/utils/RootNavigation';
 
-import { MainScreen } from '@/main/components';
-import { SortScreen } from '@/sort/components';
+import MainScreen from '@/main';
+import SortScreen from '@/sort';
 import CategoryScreen from '@/category';
 import {
   GuidesScreen,
@@ -17,7 +17,9 @@ import {
 import PhotoScreen from '@/photo';
 import TutorialScreen from '@/tutorial';
 import SettingScreen from '@/setting';
-import { FolderScreen } from '@/folder/components';
+import FolderScreen from '@/folder';
+
+import { Provider } from 'react-redux';
 import store from '@/redux/store';
 import { defaultOptionsWithHeader } from '@/shared/constants';
 import { groupScreens } from '@/shared/utils/navigationUtils';
