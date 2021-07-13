@@ -2,18 +2,16 @@ import React from 'react';
 import styled from '@emotion/native';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 
-import { userFolderLayoutData } from '../constants';
+import { userFolderLayoutData } from './constants';
 import { useUserFolders } from '@/redux/store';
 import { FolderSvgs } from '@/shared/components';
 import storage from '@/shared/utils/handleAsyncStorage';
 
 import { BasicFolderSvg } from '@/shared/components';
-import CreateFolderMessage from './CreateFolderMessage';
-import MainHeader from './MainHeader';
+import { CompleteOnboardingAlert, CreateFolderMessage, MainHeader } from './components';
 
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { usePermissions } from '@/shared/hooks';
-import CompleteOnboardingAlert from './CompleteOnboardingAlert';
 import { ParamListType } from '@/shared/types';
 
 const MainScreen: React.FC<Object> = () => {
