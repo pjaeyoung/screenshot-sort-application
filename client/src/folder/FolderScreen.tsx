@@ -4,21 +4,21 @@ import { StyleSheet, ToastAndroid, TouchableOpacity } from 'react-native';
 
 // 키보드 상단에 색상지정 및 폴더명 추천 기능 추가를 위한 라이브러리
 import { KeyboardAccessoryView } from '@flyerhq/react-native-keyboard-accessory-view';
-import { recommendedFolderNames, pallet } from '../constants';
+import { recommendedFolderNames, pallet } from './constants';
 
 import { IStoredFolder, LOADING, useUserFolders } from '@/redux/store';
-import ReduxError, { ReduxFuncReturnType } from '../utils/ReduxError';
+import ReduxError, { ReduxFuncReturnType } from './utils/ReduxError';
 import { FILEPATH } from '@/shared/utils/fsFunctions';
 
-import renderScrollable from './renderScrollable';
-import EditableFolderSvg from './EditableFolderSvg';
+import renderScrollable from './components/renderScrollable';
+import EditableFolderSvg from './components/EditableFolderSvg';
 import { FolderSvgs } from '@/shared/components';
 
 import { RouteProp, useRoute } from '@react-navigation/native';
-import CreateFolderMessage from './CreateFolderMessage';
+import CreateFolderMessage from './components/CreateFolderMessage';
 import { BasicFolderSvg } from '@/shared/components';
 
-import FloatingButton from './FloatingButton';
+import FloatingButton from './components/FloatingButton';
 import { useNavigation } from '@react-navigation/native';
 import { ParamListType } from '@/shared/types';
 import { usePermissions } from '@/shared/hooks';

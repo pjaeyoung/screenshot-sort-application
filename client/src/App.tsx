@@ -17,7 +17,7 @@ import {
 import PhotoScreen from '@/photo';
 import TutorialScreen from '@/tutorial';
 import SettingScreen from '@/setting';
-import { FolderScreen } from '@/folder/components';
+import FolderScreen from '@/folder';
 import store from '@/redux/store';
 import { defaultOptionsWithHeader } from '@/shared/constants';
 import { groupScreens } from '@/shared/utils/navigationUtils';
