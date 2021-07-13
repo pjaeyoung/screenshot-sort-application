@@ -4,13 +4,10 @@ import styled from '@emotion/native';
 import { useRoute, RouteProp, ParamListBase } from '@react-navigation/core';
 
 import { DraxProvider } from 'react-native-drax';
-import BasicFolderSvg from './BasicFolderSvg';
-import TrashFolderSvg from './TrashFolderSvg';
-import ShareFolderSvg from './ShareFolderSvg';
-import Screenshot from './Screenshot';
+import { BasicFolderSvg, TrashFolderSvg, ShareFolderSvg, Screenshot } from './components';
 
-import FolderSvgs from './FolderSvgs';
-import { userFolderLayoutData } from '../constants';
+import FolderSvgs from './components/FolderSvgs';
+import { userFolderLayoutData } from './constants';
 import { useUserFolders } from '@/redux/store';
 
 import Share from 'react-native-share';

@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { navigationRef } from '@/shared/utils/RootNavigation';
 
 import MainScreen from '@/main';
-import { SortScreen } from '@/sort/components';
+import SortScreen from '@/sort';
 import CategoryScreen from '@/category';
 import {
   GuidesScreen,

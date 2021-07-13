@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/native';
 import { StyleSheet, ToastAndroid } from 'react-native';
-import { SortScreen } from '@/sort/components';
+import SortScreen from '@/sort';
 import { Overlay } from 'react-native-elements';
 import { SpeechBubble } from './components';
 import { speechBubbles } from './constants';
