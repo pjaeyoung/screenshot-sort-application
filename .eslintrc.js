@@ -20,7 +20,8 @@ module.exports = {
   },
   plugins: ['react', 'react-hooks', '@typescript-eslint', 'prettier'],
   rules: {
-    '@typescript-eslint/no-unused-var': 'error',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error'],
     'react/display-name': 'off',
     'react/prop-types': 'off',
     'prettier/prettier': 'error',
