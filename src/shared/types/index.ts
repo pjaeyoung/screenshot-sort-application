@@ -1,6 +1,5 @@
-import { IFolderSvgProps } from './FolderSvgProps';
-export type { IFolderSvgProps };
-
+export * from './FolderSvgProps';
 export * from './photo';
 export * from './navigation';
-export type { IAlertButton } from './alert';
+export * from './redux';
+export * from './alert';
