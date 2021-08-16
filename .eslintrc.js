@@ -25,6 +25,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error'],
     'react/display-name': 'off',
     'react/prop-types': 'off',
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     'max-depth': ['error', 3],
     'max-params': ['error', 3],
     '@typescript-eslint/naming-convention': [
