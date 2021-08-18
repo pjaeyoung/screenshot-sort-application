@@ -1,13 +1,21 @@
 import * as React from 'react';
-import { GestureResponderHandlers, Dimensions, View } from 'react-native';
+import { GestureResponderHandlers, Dimensions } from 'react-native';
 import FolderScrollView from './FolderScrollView';
+import CenterButton from './CenterButton';
+
+import styled from '@emotion/native';
 
 const renderScrollable = (panHandlers: GestureResponderHandlers): React.ReactNode => {
   return (
-    <View style={{ height: Dimensions.get('screen').height }}>
+    <Wrapper>
+      <CenterButton />
       <FolderScrollView panHandlers={panHandlers} />
-    </View>
+    </Wrapper>
   );
 };
 
 export default renderScrollable;
+
+const Wrapper = styled.View({
+  height: Dimensions.get('window').height,
+});

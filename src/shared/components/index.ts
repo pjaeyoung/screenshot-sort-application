@@ -8,3 +8,4 @@ export { default as Header } from './Header';
 export { default as Permissions } from './Permissions';
 export { default as Alert } from './Alert';
 export { default as Loading } from './Loading';
+export { default as FloatingButton } from './FloatingButton';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/native';
 import ColorAccessoryItem from './ColorAccessoryItem';
-import { pallet } from '../constants';
+import { pallets } from '../constants';
 import { useEditModeState, useColorDispatch, useColorState } from '../context';
 
 const ColorAccessoryGroup: React.FC = () => {
@@ -17,7 +17,7 @@ const ColorAccessoryGroup: React.FC = () => {
   }
   return (
     <KeyboardAccessoryItem keyboardShouldPersistTaps="handled" horizontal>
-      {pallet.map((color, index) => (
+      {pallets.map((color, index) => (
         <ColorAccessoryItem
           key={index}
           color={color}
