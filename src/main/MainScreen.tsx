@@ -5,59 +5,26 @@ import { TouchableOpacity, StyleSheet } from 'react-native';
 import { userFolderLayoutData } from './constants';
 import { useUserFolders } from '@/redux/store';
 import { FolderSvgs } from '@/shared/components';
-import storage from '@/shared/utils/handleAsyncStorage';
 
 import { BasicFolderSvg } from '@/shared/components';
-import { CompleteOnboardingAlert, CreateFolderMessage, MainHeader } from './components';
+import { CreateFolderMessage, MainHeader } from './components';
 
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { usePermissions } from '@/shared/hooks';
-import { ParamListType } from '@/shared/types';
+import { useNavigation } from '@react-navigation/native';
 
-const MainScreen: React.FC<Object> = () => {
-  const { userFolders, setUserAllFolders } = useUserFolders();
+const MainScreen: React.FC = () => {
+  const { userFolders } = useUserFolders();
   // 유저가 생성한 폴더 개수에 맞는 레이아웃 결정
-  const layout = userFolderLayoutData[userFolders.length - 1];
+  const layouts = userFolderLayoutData[userFolders.length - 1];
 
-  // asyncStorage에 저장된 userFolders를 redux와 동기화 처리
-  React.useEffect(() => {
-    async function synchronizeStorageAndRedux() {
-      setUserAllFolders(await storage.getUserFolders());
-    }
-    synchronizeStorageAndRedux();
-  }, []);
-
-  // 권한허용여부에 따라 폴더화면전환버튼 터치 이벤트와 기본폴더 터치 이벤트 결정
-  const { grantedPermissions, requestPermssionsAgain } = usePermissions();
   const navigation = useNavigation();
   const navigateToCategory = (folderId: string) => () => {
     navigation.navigate('Category', { folderId });
   };
-  const navigateToFolderScreen = () =>
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: 'Folder',
-          params: { isOnboarding: false },
-        },
-      ],
-    });
-  const onPressBtnGoFolder = grantedPermissions ? navigateToFolderScreen : requestPermssionsAgain;
-
-  // 온보딩완료여부에 따라 온보딩완료알림창 렌더링 결정
-  const { params } = useRoute<RouteProp<ParamListType, 'Main'>>();
-  const [completedOnboarding, setCompletedOnboarding] = React.useState<boolean>(
-    !params?.isOnboarding ?? true,
-  );
-  const onCompleteOnboarding = async () => {
-    await storage.setCompletedOnBoarding(true);
-    setCompletedOnboarding(true);
-  };
+  const navigateToFolderScreen = () => navigation.navigate('Folder');
 
   return (
     <Wrapper>
-      <MainHeader onPressBtnGoFolder={onPressBtnGoFolder} />
+      <MainHeader onPressBtnGoFolder={navigateToFolderScreen} />
       {userFolders.length === 0 && <CreateFolderMessage />}
       <FolderList>
         {userFolders.map(({ id, folderName, borderColor }, index) => {
@@ -65,7 +32,7 @@ const MainScreen: React.FC<Object> = () => {
           return (
             <TouchableOpacity
               key={id}
-              style={[{ position: 'absolute' }, layout[index]]}
+              style={[{ position: 'absolute' }, layouts[index]]}
               onPress={navigateToCategory(id)}>
               <FolderSvg key={id} borderColor={borderColor}>
                 <FolderName top={index === 1 ? '58%' : '45%'}>{folderName}</FolderName>
@@ -79,10 +46,6 @@ const MainScreen: React.FC<Object> = () => {
         onPress={navigateToCategory('basicFolder')}>
         <BasicFolderSvg />
       </TouchableOpacity>
-      <CompleteOnboardingAlert
-        isVisible={!completedOnboarding}
-        onCompleteOnboarding={onCompleteOnboarding}
-      />
     </Wrapper>
   );
 };

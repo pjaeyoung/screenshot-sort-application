@@ -1,18 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import storage from '@react-native-async-storage/async-storage';
+import { PURGE } from 'redux-persist';
+
 import * as FS from '@/shared/utils/fsFunctions';
 
 import 'react-native-get-random-values';
 import { v1 as uuidv1 } from 'uuid';
-import {
-  RootState,
-  IUserFolderState,
-  IStoredFolder,
-  IError,
-  IFolder,
-  eLOADING,
-  AppDispatch,
-} from '../types';
+import { IUserFolderState, IStoredFolder, IError, IFolder, eLOADING, AppDispatch } from '../types';
 
 const initialState: IUserFolderState = {
   entries: [],
@@ -20,27 +13,8 @@ const initialState: IUserFolderState = {
   error: null,
 };
 
-const addUserFolderInStorage = createAsyncThunk<
-  IStoredFolder[],
-  IStoredFolder,
-  {
-    state: RootState;
-    rejectValue: IError;
-  }
->('folders/addUserFolderInStorage', async (folder, thunkAPI) => {
-  try {
-    const prevUserFolders = thunkAPI.getState().folders.entries;
-    const newUserFolders = [...prevUserFolders, folder];
-    await storage.setItem('userFolders', JSON.stringify(newUserFolders));
-    return newUserFolders;
-  } catch {
-    await FS.deleteFolder(folder.name);
-    return thunkAPI.rejectWithValue({ errorMessage: 'AsyncStorage에 폴더 추가가 실패했습니다' });
-  }
-});
-
 export const createUserFolder = createAsyncThunk<
-  void,
+  IStoredFolder,
   IFolder,
   {
     dispatch: AppDispatch;
@@ -49,7 +23,7 @@ export const createUserFolder = createAsyncThunk<
 >('folders/createUserFolder', async (folder, thunkAPI) => {
   try {
     await FS.createFolder(folder.name);
-    thunkAPI.dispatch(addUserFolderInStorage({ ...folder, id: uuidv1() }));
+    return { ...folder, id: uuidv1() };
   } catch {
     return thunkAPI.rejectWithValue({ errorMessage: '내장메모리에 폴더 생성이 실패했습니다' });
   }
@@ -69,13 +43,12 @@ const folderSlice = createSlice({
         state.loading = eLOADING.failed;
         state.error = action.payload?.errorMessage || '폴더 생성 실패';
       })
-      .addCase(addUserFolderInStorage.fulfilled, (state, action) => {
+      .addCase(createUserFolder.fulfilled, (state, action) => {
         state.loading = eLOADING.idle;
-        state.entries = action.payload;
+        state.entries.push(action.payload);
       })
-      .addCase(addUserFolderInStorage.rejected, (state, action) => {
-        state.loading = eLOADING.failed;
-        state.error = action.payload?.errorMessage || '폴더 생성 실패';
+      .addCase(PURGE, (state) => {
+        state.entries = [];
       });
   },
 });

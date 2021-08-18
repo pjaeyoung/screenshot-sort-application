@@ -1,6 +1,6 @@
-import { createUserFolder } from '../store';
-import { IFolder } from '../types';
 import { useAppDispatch, useAppSelector } from './redux';
+import { createUserFolder, persistor } from '../store';
+import { IFolder } from '../types';
 
 const useUserFolders = () => {
   const { entries, loading, error } = useAppSelector((state) => state.folders);
@@ -10,7 +10,11 @@ const useUserFolders = () => {
     return dispatch(createUserFolder(folder));
   };
 
-  return { userFolders: entries, loading, error, addUserFolder };
+  const clearAllUserFolders = () => {
+    return persistor.purge();
+  };
+
+  return { userFolders: entries, loading, error, addUserFolder, clearAllUserFolders };
 };
 
 export default useUserFolders;

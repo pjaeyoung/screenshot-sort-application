@@ -7,3 +7,4 @@ export { default as ErrorView } from './ErrorView';
 export { default as Header } from './Header';
 export { default as Permissions } from './Permissions';
 export { default as Alert } from './Alert';
+export { default as Loading } from './Loading';

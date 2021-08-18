@@ -8,79 +8,61 @@ import { navigationRef } from '@/shared/utils/RootNavigation';
 import MainScreen from '@/main';
 import SortScreen from '@/sort';
 import CategoryScreen from '@/category';
-import {
-  GuidesScreen,
-  PermissionScreen,
-  SmartCaptureGuideScreen,
-  OverlayPermissionGuideScreen,
-} from '@/onBoarding';
 import PhotoScreen from '@/photo';
 import TutorialScreen from '@/tutorial';
 import SettingScreen from '@/setting';
 import FolderScreen from '@/folder';
 
-import { Provider } from 'react-redux';
-import store from '@/redux/store';
 import { defaultOptionsWithHeader } from '@/shared/constants';
-import { groupScreens } from '@/shared/utils/navigationUtils';
-import { IScreenGroup } from '@/shared/types';
-import { useCheckCompletedOnBoarding } from './shared/hooks';
 
-const onBoardingScreens: IScreenGroup = {
-  Guides: GuidesScreen,
-  Permissions: PermissionScreen,
-  SmartCaptureGuide: SmartCaptureGuideScreen,
-  OverlayPermissionGuide: OverlayPermissionGuideScreen,
-};
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import store, { persistor } from '@/shared/store';
+import { Loading } from './shared/components';
 
 const Stack = createStackNavigator();
 
 const App: React.FC<void> = () => {
-  const completedOnboarding = useCheckCompletedOnBoarding();
-  // asyncStorage에서 값을 가져오는 시간 동안 null 처리
-  // TODO: 추후 업데이트에서 로딩화면 대체하기
-  if (completedOnboarding === null) return null;
-
   return (
     <Provider store={store}>
-      <NavigationContainer ref={navigationRef}>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-          }}
-          headerMode="screen"
-          initialRouteName={completedOnboarding ? 'Main' : 'Guides'}>
-          <Stack.Screen name="Main" component={MainScreen} />
-          <Stack.Screen name="Tutorial" component={TutorialScreen} />
-          <Stack.Screen name="Folder" component={FolderScreen} />
-          <Stack.Screen name="Sort" component={SortScreen} />
-          <Stack.Screen
-            name="Category"
-            component={CategoryScreen}
-            options={{
-              headerShown: true,
-              ...defaultOptionsWithHeader,
+      <PersistGate loading={<Loading />} persistor={persistor}>
+        <NavigationContainer ref={navigationRef}>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
             }}
-          />
-          <Stack.Screen
-            name="Photo"
-            component={PhotoScreen}
-            options={{
-              ...defaultOptionsWithHeader,
-            }}
-          />
-          <Stack.Screen
-            name="Setting"
-            component={SettingScreen}
-            options={{
-              headerShown: true,
-              headerTitle: '',
-              headerStyle: { backgroundColor: '#F7F7F7' },
-            }}
-          />
-          {groupScreens({ group: onBoardingScreens, Screen: Stack.Screen })}
-        </Stack.Navigator>
-      </NavigationContainer>
+            headerMode="screen">
+            <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen name="Tutorial" component={TutorialScreen} />
+            <Stack.Screen name="Folder" component={FolderScreen} />
+            <Stack.Screen name="Sort" component={SortScreen} />
+            <Stack.Screen
+              name="Category"
+              component={CategoryScreen}
+              options={{
+                headerShown: true,
+                ...defaultOptionsWithHeader,
+              }}
+            />
+            <Stack.Screen
+              name="Photo"
+              component={PhotoScreen}
+              options={{
+                ...defaultOptionsWithHeader,
+              }}
+            />
+            <Stack.Screen
+              name="Setting"
+              component={SettingScreen}
+              options={{
+                headerShown: true,
+                headerTitle: '',
+                headerStyle: { backgroundColor: '#F7F7F7' },
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PersistGate>
     </Provider>
   );
 };
